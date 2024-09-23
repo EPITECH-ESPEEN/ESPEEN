@@ -2,7 +2,7 @@ name: "Feature request"
 description: "Request a feature or a changement."
 title: "[FEATURE] "
 labels: ["feature"]
-projects: ["ESPEEN/2"]
+projects: ["EPITECH-ESPEEN/2"]
 body:
   - type: dropdown
     id: target
