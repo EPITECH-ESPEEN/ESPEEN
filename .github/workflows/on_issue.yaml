@@ -16,27 +16,29 @@ jobs:
         with:
           github-token: ${{ github.token }}
           script: |
-            const core = require('@actions/core');
-            const github = require('@actions/github');
+            const { GitHub } = require('@actions/github');
 
-            const context = github.context;
+            const octokit = new GitHub(github.token);
+            const context = octokit.context;
+
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const issueNumber = context.issue.number;
 
-            const octokit = new github.getOctokit(core.getInput('github-token'));
-
+            // Get the project ID
             const projectId = await octokit.projects.list({
               owner,
               repo,
             }).then(response => response.data[0].id);
 
+            // Create a new view
             const viewName = `View for Issue #${issueNumber}`;
             const view = await octokit.projects.createView({
               projectId,
               name: viewName,
             });
 
+            // Add the issue to the view
             await octokit.projects.updateCard({
               columnId: view.data.column_id,
               id: view.data.id,
