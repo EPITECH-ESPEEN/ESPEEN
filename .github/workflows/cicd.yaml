@@ -1,0 +1,48 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - **.md
+      - **.txt
+
+jobs:
+  init:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Add custom ignors for dev/prod isolation
+        run: |
+          cat .mirrorignore >> .gitignore
+
+  scan_for_leaks:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v3
+        with:
+          - fetch-depth: 0
+
+      - name: Scan for leaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENCE: ${{ secrets.GITLEAKS_LICENSE }}
+
+  test_build_and_features:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v3
+        with:
+          - fetch-depth: 0
+
+      - name: Build the code
+        run: |
+          make build

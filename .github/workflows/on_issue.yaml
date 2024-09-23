@@ -1,0 +1,47 @@
+name: Add View on New Issue
+
+on:
+  issue:
+    types: [opened]
+
+jobs:
+  add-view:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Add view
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const core = require('@actions/core');
+            const github = require('@actions/github');
+
+            const context = github.context;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const issueNumber = context.issue.number;
+
+            const octokit = new github.getOctokit(core.getInput('github-token'));
+
+            const projectId = await octokit.projects.list({
+              owner,
+              repo,
+            }).then(response => response.data[0].id);
+
+            const viewName = `View for Issue #${issueNumber}`;
+            const view = await octokit.projects.createView({
+              projectId,
+              name: viewName,
+            });
+
+            await octokit.projects.updateCard({
+              columnId: view.data.column_id,
+              id: view.data.id,
+              content_type: 'Issue',
+              content_id: issueNumber,
+            });
+
+            core.setOutput('viewId', view.data.id);
