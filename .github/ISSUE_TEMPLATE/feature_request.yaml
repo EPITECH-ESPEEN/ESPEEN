@@ -1,0 +1,50 @@
+name: "[FEATURE] Feature request"
+description: Request a feature or a changement.
+title: "[FEATURE] <title>"
+labels: ["feature"]
+projects: ["ESPEEN/2"]
+body:
+  - type: dropdown
+    id: target
+    attributes:
+      label: "Changement domain"
+      description: "Select which part of the project you wish to change"
+      options:
+        - Backend
+        - Database
+        - DevOps
+        - Frontend
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: "Title"
+      description: "Make a clear and concise summary of the update you propose"
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: "Description"
+      description: |
+        Explain **in details** what you wish to see added.
+
+        - Do not ask to undo changes. Use previous release if you don't want specific features.
+        - Do not ask for illegal content.
+        - Do not ask for out-of-scope content.
+        - Be **clear** on your explanations.
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: "Proper writing"
+      description: "By checking this, you agree that your issue will be deleted if it is not well written."
+      options:
+        - label: I agree.
+          required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        **Remember to move the issue in the valid Column on the Github Project**

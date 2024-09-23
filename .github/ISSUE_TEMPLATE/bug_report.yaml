@@ -1,0 +1,84 @@
+name: "[BUG] Bug report"
+description: "Report a Bug"
+title: "[BUG] <title>"
+labels: ["bug"]
+projects: ["ESPEEN/2"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        *Before reporting*
+        - Verify that the bug is still reproducible on latest commit / latest release.
+        - Verify that no existing issues cover similar bugs (including closed issues).
+
+  - type: textarea
+    attributes:
+      label: "Problem"
+      description: "Describe the current behavior. May include logs, images, or videos."
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: "Steps to reproduce"
+      placeholder: "./run"
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: "Expected behavior"
+      description: "Describe the behavior you expect, and how it differs from the actual happening."
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: "Commit SHA"
+      placeholder: "d34dc0d3c0f3"
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: "Versions"
+      description: "Paste here any version on your system that might be directly or indirectly related to that issue."
+      placeholder: |
+        Ubuntu 22.04
+        Docker version 27.3.1, build ce12230
+        Docker Compose version v2.29.7
+        NodeJS v22.7.0
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: "Previous tryes"
+      description: "Describe everything you tryed before in order to fix the issue."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: "Expected priority"
+      description: "Enter here the priority you think is the most suited for your Bug Report."
+      options:
+        - Absolute need
+        - Needed / Required
+        - Should
+        - Could
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: "Proper writing"
+      description: "By checking this, you accept that your issue will be deleted if it is not well written."
+      options:
+        - label: I agree.
+          required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        **Remember to move the issue in the valid Column on the Github Project**
