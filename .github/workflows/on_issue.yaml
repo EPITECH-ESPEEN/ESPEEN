@@ -19,7 +19,6 @@ jobs:
             const { GitHub } = require('@actions/github');
 
             const octokit = new GitHub(github.token);
-            const context = octokit.context;
 
             const owner = context.repo.owner;
             const repo = context.repo.repo;
