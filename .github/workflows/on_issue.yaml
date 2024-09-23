@@ -12,33 +12,29 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Add view
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{ github.token }}
           script: |
-            const { GitHub } = require('@actions/github');
-
-            const octokit = new GitHub(github.token);
-
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const issueNumber = context.issue.number;
 
             // Get the project ID
-            const projectId = await octokit.projects.list({
+            const projectId = await github.projects.list({
               owner,
               repo,
             }).then(response => response.data[0].id);
 
             // Create a new view
             const viewName = `View for Issue #${issueNumber}`;
-            const view = await octokit.projects.createView({
+            const view = await github.projects.createView({
               projectId,
               name: viewName,
             });
 
             // Add the issue to the view
-            await octokit.projects.updateCard({
+            await github.projects.updateCard({
               columnId: view.data.column_id,
               id: view.data.id,
               content_type: 'Issue',
