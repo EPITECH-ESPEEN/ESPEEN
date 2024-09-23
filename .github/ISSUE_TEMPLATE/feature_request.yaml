@@ -1,6 +1,6 @@
-name: "[FEATURE] Feature request"
-description: Request a feature or a changement.
-title: "[FEATURE] <title>"
+name: "Feature request"
+description: "Request a feature or a changement."
+title: "[FEATURE] "
 labels: ["feature"]
 projects: ["ESPEEN/2"]
 body:

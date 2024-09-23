@@ -1,6 +1,6 @@
-name: "[BUG] Bug report"
-description: "Report a Bug"
-title: "[BUG] <title>"
+name: "Bug report"
+description: "Report a behaviour that does not follow normal operation of the software."
+title: "[BUG] "
 labels: ["bug"]
 projects: ["ESPEEN/2"]
 body:
