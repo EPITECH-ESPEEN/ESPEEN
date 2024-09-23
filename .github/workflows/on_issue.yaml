@@ -20,6 +20,8 @@ jobs:
             const repo = context.repo.repo;
             const issueNumber = context.issue.number;
 
+            Object.keys(github).forEach(key => console.log(key));
+
             // Get the project ID
             const projectId = await github.projects.list({
               owner,
