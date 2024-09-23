@@ -1,6 +1,5 @@
 name: "Bug report"
 description: "Report a behaviour that does not follow normal operation of the software."
-title: "[BUG] "
 labels: ["bug"]
 projects: ["EPITECH-ESPEEN/2"]
 body:
