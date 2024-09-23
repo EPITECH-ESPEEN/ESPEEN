@@ -7,7 +7,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        *Before reporting*
+        **Before reporting**
         - Verify that the bug is still reproducible on latest commit / latest release.
         - Verify that no existing issues cover similar bugs (including closed issues).
 
@@ -45,8 +45,11 @@ body:
       description: "Paste here any version on your system that might be directly or indirectly related to that issue."
       placeholder: |
         Ubuntu 22.04
+
         Docker version 27.3.1, build ce12230
+
         Docker Compose version v2.29.7
+
         NodeJS v22.7.0
     validations:
       required: true
@@ -68,6 +71,8 @@ body:
         - Needed / Required
         - Should
         - Could
+    validations:
+      required: true
 
   - type: checkboxes
     id: terms
