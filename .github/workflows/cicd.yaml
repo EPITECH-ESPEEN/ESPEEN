@@ -24,6 +24,10 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           export GIT_SSH_COMMAND="ssh -v -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -l git"
           git submodule update --init --recursive
+          rm -rf .git/modules/
+          rm -f .gitmodules
+          rm -f backend/.git
+          rm -f frontend/.git
           rm -rf ~/.ssh/
 
       - name: Add custom ignors for dev/prod isolation
