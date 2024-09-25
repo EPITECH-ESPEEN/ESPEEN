@@ -5,8 +5,8 @@ on:
     branches:
       - main
     paths-ignore:
-      - **.md
-      - **.txt
+      - "**.md"
+      - "**.txt"
 
 jobs:
   init:

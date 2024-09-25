@@ -1,0 +1,39 @@
+name: "Add service"
+description: "Request the addition of a service (API)"
+labels: ["service"]
+projects: ["EPITECH-ESPEEN/2"]
+body:
+  - type: input
+    attributes:
+      label: "Name"
+      description: "Paste here the name of the API you wish to integrate (I.E. Nasa API)"
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: "Description"
+      description: "Explain **in details** why we should integrate that API, what it would help on..."
+    validation:
+      required: true
+
+  - type: input
+    attributes:
+      label: "API documentation's URL"
+      description: "Paste here the URL to that API's documentation"
+    validation:
+      required: true
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: "Proper writing"
+      description: "By checking this, you agree that your issue will be deleted if it is not well written."
+      options:
+        - label: I agree.
+          required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        **Remember to move the issue in the valid Column on the Github Project**
