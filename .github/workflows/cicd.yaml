@@ -30,6 +30,10 @@ jobs:
         run: |
           cat .mirrorignore >> .gitignore
 
+      - name: Check if gitleaks license is present
+        run: |
+          echo ${{ secrets.GITLEAKS_LICENSE }}
+
       - name: Scan for leaks
         uses: gitleaks/gitleaks-action@v2
         env:
