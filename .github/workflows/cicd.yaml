@@ -40,7 +40,7 @@ jobs:
 
       - name: Add custom ignors for dev/prod isolation
         run: |
-          cat .mirrorignore >> $HOME/repository/.gitignore
+          cat .mirrorignore >> ./.gitignore
 
       - uses: gitleaks/gitleaks-action@v2
         env:
