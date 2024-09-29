@@ -37,7 +37,6 @@ jobs:
           rm -f frontend/.git
           rm -f mobile/.git
           rm -rf ~/.ssh/
-          cp -r ./ $HOME/repository
 
       - name: Add custom ignors for dev/prod isolation
         run: |
@@ -51,6 +50,7 @@ jobs:
       - name: Mirror repository to target repo
         run: |
           export GIT_SSH_COMMAND="ssh -v -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -l git"
+          ls -la ~/.ssh/
         # uses: pixta-dev/repository-mirroring-action@v1
         # with:
           # target_repo_url: ${{ secrets.TARGET_REPOSITORY }}
