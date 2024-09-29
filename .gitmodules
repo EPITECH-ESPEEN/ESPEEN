@@ -4,3 +4,6 @@
 [submodule "backend"]
 	path = backend
 	url = git@github.com:EPITECH-ESPEEN/ESPEEN-Backend.git
+[submodule "mobile"]
+	path = mobile
+	url = https://github.com/EPITECH-ESPEEN/ESPEEN-Frontend-mobile.git

@@ -35,6 +35,7 @@ jobs:
           rm -f .gitmodules
           rm -f backend/.git
           rm -f frontend/.git
+          rm -f mobile/.git
           rm -rf ~/.ssh/
           cp -r ./ $HOME/repository
 
