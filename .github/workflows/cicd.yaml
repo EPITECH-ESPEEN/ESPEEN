@@ -27,7 +27,7 @@ jobs:
       - name: Mirror repository to target repo
         run: |
           cat .mirrorignore >> ./.gitignore
-          rm -rf .git/modules/
+          rm -rf .git/modules/*
           rm -f .gitmodules
           rm -f backend/.git
           rm -f frontend/.git
