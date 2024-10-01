@@ -1,0 +1,75 @@
+services:
+  db:
+    image: mongo:latest
+    env_file:
+      - ./.env
+    container_name: area-db
+    restart: always
+    networks:
+      area:
+        ipv4_address: ${DATABASE_HOST}
+    volumes:
+      - "./data/:/data/db"
+
+  server:
+    build:
+      context: ./
+      dockerfile: ./docker/Dockerfile.backend.dev
+    env_file:
+      - ./.env
+    container_name: area-backend
+    restart: always
+    networks:
+      area:
+        ipv4_address: ${BACKEND_HOST}
+    volumes:
+      - "./backend/:/app/"
+    depends_on:
+      - db
+
+  client_mobile:
+    build:
+      context: ./
+      dockerfile: ./docker/Dockerfile.frontend.dev
+    env_file:
+      - ./.env
+    container_name: area-mobile
+    restart: always
+    ports:
+      # - "8081:80"
+    networks:
+      area:
+        ipv4_address: ${MOBILE_HOST}
+    volumes:
+      - "./mobile/:/app/"
+    depends_on:
+      - db
+      - backend
+
+  client_web:
+    build:
+      context: ./
+      dockerfile: ./docker/Dockerfile.frontend.dev
+    env_file:
+      - ./.env
+    container_name: area-web
+    restart: always
+    ports:
+      - "8081:80"
+    networks:
+      area:
+        ipv4_address: ${FRONTEND_HOST}
+    volumes:
+      - "./frontend/:/app/"
+    depends_on:
+      - db
+      - client_mobile
+      - backend
+
+networks:
+  area:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: ${NETWORK_SUBNET}
+          gateway: ${NETWORK_GATEWAY}

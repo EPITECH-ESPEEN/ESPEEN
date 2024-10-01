@@ -14,14 +14,14 @@ body:
     attributes:
       label: "Description"
       description: "Explain **in details** why we should integrate that API, what it would help on..."
-    validation:
+    validations:
       required: true
 
   - type: input
     attributes:
       label: "API documentation's URL"
       description: "Paste here the URL to that API's documentation"
-    validation:
+    validations:
       required: true
 
   - type: checkboxes
