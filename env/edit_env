@@ -1,0 +1,9 @@
+#!/bin/bash
+
+gpg --decrypt .env.gpg > .env
+
+$EDITOR .env
+
+gpg --symmetric --cipher-algo AES256 .env
+
+rm .env
