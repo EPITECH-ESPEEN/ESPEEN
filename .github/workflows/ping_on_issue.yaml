@@ -1,0 +1,34 @@
+name: "Discord ping on Issue open"
+
+on:
+  issues:
+    types: [opened, edited, milestoned]
+
+
+jobs:
+  test_and_mirror_code:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Sample debug
+        
+      - name: Send error message to Discord on failure
+        uses: tsickert/discord-webhook@v6.0.0
+        with:
+          webhook-url: ${{ secrets.WEBHOOK_URL }}
+          username: "Github - ${{ github.actor }}"
+          avatar-url: "https://github.com/${{ github.actor }}.png"
+          embed-title: ":x: **Action failed** :x:"
+          embed-author-name: ${{ github.actor }}
+          embed-color: 16742912
+          embed-url: "${{ github.event.head_commit.url }}"
+          embed-author-url: "https://github.com/${{ github.actor }}"
+          embed-author-icon-url: "https://github.com/${{ github.actor }}.png"
+          embed-description: "**${{ github.event.repository.owner.name }}/${{ github.event.repository.name }}**
+
+[${{ github.event.head_commit.message }}](${{ github.event.head_commit.url }})
+
+Commit ID: ${{ github.event.head_commit.id }}
+
+Pushed by ${{ github.event.pusher.email }}
+
+Find logs [here](https://github.com/EPITECH-ESPEEN/ESPEEN/actions/workflows/cicd.yaml)"

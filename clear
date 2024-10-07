@@ -1,0 +1,21 @@
+#!/bin/bash
+
+echo "Use this script ONLY if you get weird docker errors: this will wipe all your containers, volumes, networks..."
+
+read -p "Ok ? (press Ctrl+C to stop, and Enter to continue)"
+
+SUDO=""
+
+if [ $(test -r /var/run/docker.sock; echo "$?") -ne 0 ]; then
+    SUDO="sudo"
+fi
+
+$SUDO docker stop $($SUDO docker ps -aq)
+$SUDO docker rm $($SUDO docker ps -aq)
+$SUDO docker volume rm $($SUDO docker volume ls -q)
+$SUDO docker network rm $($SUDO docker network ls -q)
+
+rm -f docker-compose.yaml
+rm -f .env
+
+echo "All done !"

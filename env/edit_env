@@ -1,9 +1,16 @@
 #!/bin/bash
 
-gpg --decrypt .env.gpg > .env
+if [ -z "${ENV_PASSWORD}" ] ; then
+    read -p "Crypt password: " -s ENV_PASSWORD
+    echo
+fi
+
+echo "${ENV_PASSWORD}" > .env_password
+
+openssl enc -aes-256-cbc -d -in .env-crypt -out .env -pass pass:.env_password 2>/dev/null || (rm .env_password; exit 1)
 
 $EDITOR .env
 
-gpg --symmetric --cipher-algo AES256 .env
+openssl enc -aes-256-cbc -salt -in .env -out .env-crypt -pass pass:.env_password 2>/dev/null
 
-rm .env
+rm .env_password .env

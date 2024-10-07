@@ -10,16 +10,14 @@ echo
 
 mode=""
 edit=true
-password_file=""
 
 modes=(dev prod)
 
 usage() {
-    echo "Usage: $0 [-h] [-m dev|prod] [-n] [-p password_file]" 1>&2
+    echo "Usage: $0 [-h] [-m dev|prod] [-n]" 1>&2
     echo "    -h : Help" 1>&2
     echo "    -m : Mode (dev / prod)" 1>&2
     echo "    -n : No edit env" 1>&2
-    echo "    -p : File containing password to decrypt env" 1>&2
     exit 1
 }
 
@@ -36,7 +34,7 @@ rand() {
     echo "$password"
 }
 
-OPTSTRING=":hm:np:"
+OPTSTRING=":hm:n"
 
 while getopts ${OPTSTRING} opt; do
     case ${opt} in
@@ -48,9 +46,6 @@ while getopts ${OPTSTRING} opt; do
             ;;
         n)
             edit=false
-            ;;
-        p)
-            password_file="${OPTARG}"
             ;;
         :)
             echo "Option -${OPTARG} requires an argument."
@@ -84,6 +79,7 @@ if [ $(test -r /var/run/docker.sock; echo "$?") -ne 0 ]; then
     SUDO="sudo"
 fi
 
+git pull
 git submodule update --init --recursive 2>/dev/null
 
 $SUDO docker stop area-web area-mobile area-backend area-db 2>/dev/null
@@ -91,15 +87,18 @@ $SUDO docker rm area-web area-mobile area-backend area-db 2>/dev/null
 $SUDO docker network rm epitech-area_area 2>/dev/null
 $SUDO docker rmi epitech-area-client_mobile epitech-area-client_web epitech-area-server 2>/dev/null
 
-
 outfile="$(mktemp)"
 
-if [ -z "$password_file" ]; then
-    gpg --decrypt ./env/.env.gpg > "$outfile"
-else
-    chmod 600 "$password_file"
-    gpg --batch --yes --passphrase-file "$password_file" --decrypt ./env/.env.gpg > "$outfile"
+if [ -z "${ENV_PASSWORD}" ] ; then
+    read -p "Crypt password: " -s ENV_PASSWORD
+    echo
 fi
+
+echo "${ENV_PASSWORD}" > .env_password
+
+openssl enc -aes-256-cbc -d -in ./env/.env-crypt -out "$outfile" -pass pass:.env_password 2>/dev/null || (rm .env_password; exit 1)
+
+rm .env_password
 
 if $edit ; then
     $EDITOR "$outfile"
@@ -114,8 +113,6 @@ variable_names=$(grep -oE '^[a-zA-Z_][a-zA-Z0-9_]*=' "$outfile" | sed 's/=$//')
         echo "$var=\"${!var}\""
     done
 } > .env
-
-envsubst < ./docker/init-mongo.js > ./init-mongo.js
 
 if [ "$mode" = "dev" ]; then
     cp ./docker/docker-compose-dev.yaml docker-compose.yaml
