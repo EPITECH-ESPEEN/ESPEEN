@@ -9,26 +9,24 @@ jobs:
   test_and_mirror_code:
     runs-on: ubuntu-22.04
     steps:
-      - name: Sample debug
-        
       - name: Send error message to Discord on failure
         uses: tsickert/discord-webhook@v6.0.0
         with:
           webhook-url: ${{ secrets.WEBHOOK_URL }}
           username: "Github - ${{ github.actor }}"
           avatar-url: "https://github.com/${{ github.actor }}.png"
-          embed-title: ":x: **Action failed** :x:"
+          embed-title: "${{ github.event.action == 'opened' && 'Issue Created' || github.event.action == 'edited' && 'Issue Edited' || github.event.action == 'milestoned' && 'Milestone Assigned' }}"
           embed-author-name: ${{ github.actor }}
-          embed-color: 16742912
-          embed-url: "${{ github.event.head_commit.url }}"
+          embed-color: ${{ github.event.action == 'opened' && 584739 || github.event.action == 'edited' && 14347272 || github.event.action == 'milestoned' && 16409600 }}
+          embed-url: "${{ github.event.issue.html_url }}"
           embed-author-url: "https://github.com/${{ github.actor }}"
           embed-author-icon-url: "https://github.com/${{ github.actor }}.png"
-          embed-description: "**${{ github.event.repository.owner.name }}/${{ github.event.repository.name }}**
+          embed-description: "**${{ github.event.repository.owner.login }}/${{ github.event.repository.name }}**
 
-[${{ github.event.head_commit.message }}](${{ github.event.head_commit.url }})
+# ${{ github.event.issue.title }}
 
-Commit ID: ${{ github.event.head_commit.id }}
+${{ github.event.issue.body }}
 
-Pushed by ${{ github.event.pusher.email }}
+`By: ${{ github.event.issue.user.login }}`
 
-Find logs [here](https://github.com/EPITECH-ESPEEN/ESPEEN/actions/workflows/cicd.yaml)"
+[Access issue](${{ github.event.issue.html_url }})"
