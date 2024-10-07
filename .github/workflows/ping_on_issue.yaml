@@ -4,7 +4,6 @@ on:
   issues:
     types: [opened, edited, milestoned]
 
-
 jobs:
   test_and_mirror_code:
     runs-on: ubuntu-22.04
@@ -12,7 +11,7 @@ jobs:
       - name: Send error message to Discord on failure
         uses: tsickert/discord-webhook@v6.0.0
         with:
-          webhook-url: ${{ secrets.WEBHOOK_URL }}
+          webhook-url: ${{ secrets.ISSUE_WEBHOOK_URL }}
           username: "Github - ${{ github.actor }}"
           avatar-url: "https://github.com/${{ github.actor }}.png"
           embed-title: "${{ github.event.action == 'opened' && 'Issue Created' || github.event.action == 'edited' && 'Issue Edited' || github.event.action == 'milestoned' && 'Milestone Assigned' }}"
