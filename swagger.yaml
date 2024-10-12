@@ -1,49 +1,56 @@
 openapi: 3.0.0
-info:
-  title: ESPEEN AREA
-  description: This the swagger for ESPEEN AREA
-  version: 1.0.0
 servers:
-- url: https://virtserver.swaggerhub.com/LEONARDOURSEL/ESPEEN/1.0.0
-  description: SwaggerHub API Auto Mocking
-- url: http://localhost:8080/api
-  description: routes to backend
+  # Added by API Auto Mocking Plugin
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/LEONARDOURSEL/ESPEEN/1.0.0
+  - description: routes to backend
+    url: http://localhost:8080/api
+info:
+  version: 1.0.0
+  title: ESPEEN AREA
+  description: >-
+    This the swagger for ESPEEN AREA
 security:
-- application:
-  - read
-  - write
+  - application:
+      - read
+      - write
 paths:
   /auth:
     get:
       summary: Redirect to google authentification
-      description: This is an example operation to show how security is applied to the call.
+      description: >-
+        This is an example operation to show how security is applied to the
+        call.
       responses:
-        "200":
+        '200':
           description: OK
   /oauth2callback:
     get:
       summary: Page where google redirect after authentification
-      description: "This operation shows how to override the global security defined above, as we want to open it up for all users."
-      responses:
-        "200":
-          description: OK
+      description: >-
+        This operation shows how to override the global security defined above,
+        as we want to open it up for all users.
       security: []
+      responses:
+        '200':
+          description: OK
   /about.json:
     get:
       summary: Get the JSON file about the project
-      description: Return the JSON file where all services in the project are specified
-      responses:
-        "200":
-          description: OK
+      description: >-
+        Return the JSON file where all services in the project are specified
       security: []
+      responses:
+        '200':
+          description: OK
 components:
-  schemas: {}
   securitySchemes:
     application:
       type: oauth2
       flows:
         clientCredentials:
-          tokenUrl: http://example.com/oauth/token
+          tokenUrl: 'http://example.com/oauth/token'
           scopes:
             write: allows modifying resources
             read: allows reading resources
