@@ -15,7 +15,7 @@ services:
       area:
         ipv4_address: ${DATABASE_HOST}
     volumes:
-      - "./data/:/data/db"
+      - "./data/db/:/data/db"
       - "./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js"
 
   server:
@@ -34,7 +34,7 @@ services:
     container_name: area-backend
     restart: always
     ports:
-      - "8080:${BACKEND_PORT}"
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
     networks:
       area:
         ipv4_address: ${BACKEND_HOST}
@@ -52,10 +52,11 @@ services:
     environment:
       - PORT=${MOBILE_PORT}
       - NODE_ENV=DEV
+      - BACKEND_URL="http://${DOMAIN_NAME}:${BACKEND_PORT}/"
     container_name: area-mobile
     restart: always
     ports:
-      - "8082:${MOBILE_PORT}"
+      - "${MOBILE_PORT}:${MOBILE_PORT}"
     networks:
       area:
         ipv4_address: ${MOBILE_HOST}
@@ -74,15 +75,17 @@ services:
     environment:
       - PORT=${FRONTEND_PORT}
       - NODE_ENV=DEV
+      - BACKEND_URL="http://${DOMAIN_NAME}:${BACKEND_PORT}/"
     container_name: area-web
     restart: always
     ports:
-      - "8081:${FRONTEND_PORT}"
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
     networks:
       area:
         ipv4_address: ${FRONTEND_HOST}
     volumes:
       - "./frontend/:/app/"
+      - "./data/mobile/:/opt/mobile_build/"
     depends_on:
       - db
       - client_mobile
