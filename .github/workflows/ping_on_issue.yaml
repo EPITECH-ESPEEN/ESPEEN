@@ -1,0 +1,31 @@
+name: "Discord ping on Issue open"
+
+on:
+  issues:
+    types: [opened, edited, milestoned]
+
+jobs:
+  test_and_mirror_code:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Send error message to Discord on failure
+        uses: tsickert/discord-webhook@v6.0.0
+        with:
+          webhook-url: ${{ secrets.ISSUE_WEBHOOK_URL }}
+          username: "Github - ${{ github.actor }}"
+          avatar-url: "https://github.com/${{ github.actor }}.png"
+          embed-title: "${{ github.event.action == 'opened' && 'Issue Created' || github.event.action == 'edited' && 'Issue Edited' || github.event.action == 'milestoned' && 'Milestone Assigned' }}"
+          embed-author-name: ${{ github.actor }}
+          embed-color: ${{ github.event.action == 'opened' && 584739 || github.event.action == 'edited' && 14347272 || github.event.action == 'milestoned' && 16409600 }}
+          embed-url: "${{ github.event.issue.html_url }}"
+          embed-author-url: "https://github.com/${{ github.actor }}"
+          embed-author-icon-url: "https://github.com/${{ github.actor }}.png"
+          embed-description: "**${{ github.event.repository.owner.login }}/${{ github.event.repository.name }}**
+
+# ${{ github.event.issue.title }}
+
+${{ github.event.issue.body }}
+
+`By: ${{ github.event.issue.user.login }}`
+
+[Access issue](${{ github.event.issue.html_url }})"
