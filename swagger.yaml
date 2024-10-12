@@ -1,9 +1,6 @@
 openapi: 3.0.0
 servers:
   # Added by API Auto Mocking Plugin
-  # Added by API Auto Mocking Plugin
-  - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/LEONARDOURSEL/ESPEEN/1.0.0
   - description: routes to backend
     url: http://localhost:8080/api
 info:
