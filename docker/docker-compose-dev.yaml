@@ -16,6 +16,7 @@ services:
         ipv4_address: ${DATABASE_HOST}
     volumes:
       - "./data/:/data/db"
+      - "./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js"
 
   server:
     build:
@@ -26,6 +27,7 @@ services:
     environment:
       - PORT=${BACKEND_PORT}
       - NODE_ENV=DEV
+      - DB_LOCAL_URI=${DB_URI}
     container_name: area-backend
     restart: always
     ports:
