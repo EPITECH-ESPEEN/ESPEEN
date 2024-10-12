@@ -16,34 +16,188 @@ security:
       - read
       - write
 paths:
-  /auth:
-    get:
-      summary: Redirect to google authentification
-      description: >-
-        This is an example operation to show how security is applied to the
-        call.
-      responses:
-        '200':
-          description: OK
-  /oauth2callback:
-    get:
-      summary: Page where google redirect after authentification
-      description: >-
-        This operation shows how to override the global security defined above,
-        as we want to open it up for all users.
-      security: []
-      responses:
-        '200':
-          description: OK
   /about.json:
     get:
-      summary: Get the JSON file about the project
+      summary: Get information from about.json
       description: >-
-        Return the JSON file where all services in the project are specified
-      security: []
+        Reads the about.json file, adds the client's IP to the data, and returns it.
       responses:
         '200':
-          description: OK
+          description: Successful response with JSON data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  client:
+                    type: object
+                    properties:
+                      host:
+                        type: string
+                        example: "192.168.0.1"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal Server Error"
+  /auth:
+    get:
+      summary: Redirect to Google OAuth 2.0 authentication
+      description: >-
+        Generates a Google OAuth 2.0 authentication URL and redirects the user to it.
+      responses:
+        '302':
+          description: Redirects to Google OAuth login page
+
+  /oauth2callback:
+    get:
+      summary: Handle Google OAuth 2.0 callback
+      description: >-
+        Processes the callback after Google authentication to retrieve and set the access tokens.
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "4/0AX4XfW..."
+          description: Authorization code returned by Google after user login.
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Authentification réussie, tu peux fermer cette fenêtre."
+        '400':
+          description: Bad Request - Missing validation code
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Code de validation manquant"
+
+  /register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "john_doe"
+                email:
+                  type: string
+                  format: email
+                  example: "john@example.com"
+                password:
+                  type: string
+                  format: password
+                  example: "password123"
+      responses:
+        '201':
+          description: User successfully registered
+        '400':
+          description: Bad Request - Validation failed
+
+  /login:
+    post:
+      summary: Log in a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "john_doe"
+                password:
+                  type: string
+                  format: password
+                  example: "password123"
+      responses:
+        '200':
+          description: User successfully logged in
+        '400':
+          description: Bad Request - Missing credentials
+        '401':
+          description: Unauthorized - Invalid username or password
+
+  /logout:
+    get:
+      summary: Log out a user
+      responses:
+        '200':
+          description: User successfully logged out
+
+  /profile:
+    get:
+      summary: Get the user's profile
+      responses:
+        '200':
+          description: Profile successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: "615c0c10a1d4c7123435f660"
+                      username:
+                        type: string
+                        example: "john_doe"
+                      email:
+                        type: string
+                        example: "john@example.com"
+        '401':
+          description: Unauthorized - User not authenticated
+        '404':
+          description: User not found
+  /users:
+    get:
+      summary: Retrieve all users
+      description: >-
+        Returns a list of all users in the system. This route requires the user to be authenticated.
+      responses:
+        '200':
+          description: Successful response with a list of users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                          example: "615c0c10a1d4c7123435f660"
+                        username:
+                          type: string
+                          example: "john_doe"
+                        email:
+                          type: string
+                          example: "john@example.com"
+        '401':
+          description: Unauthorized - User not authenticated
 components:
   securitySchemes:
     application:
