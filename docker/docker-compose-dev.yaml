@@ -28,6 +28,9 @@ services:
       - PORT=${BACKEND_PORT}
       - NODE_ENV=DEV
       - DB_LOCAL_URI=${DB_URI}
+      - DB_URI=${DB_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_TIME=${JWT_EXPIRES_TIME}
     container_name: area-backend
     restart: always
     ports:
