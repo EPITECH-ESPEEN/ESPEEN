@@ -18,21 +18,21 @@ paths:
       summary: Get all action reactions
       operationId: getAllActionReactions
       responses:
-        '200':
+        "200":
           description: A list of action reactions
-        '404':
+        "404":
           description: Action reactions not found
-        '500':
+        "500":
           description: Failed to process ActionReactions
     post:
       summary: Create a new action reaction
       operationId: createActionReaction
       responses:
-        '201':
+        "201":
           description: Action reaction created
-        '401':
+        "401":
           description: Unauthenticated
-        '500':
+        "500":
           description: Internal Server Error
   /about.json:
     get:
@@ -40,7 +40,7 @@ paths:
       description: >-
         Reads the about.json file, adds the client's IP to the data, and returns it.
       responses:
-        '200':
+        "200":
           description: Successful response with JSON data
           content:
             application/json:
@@ -53,7 +53,7 @@ paths:
                       host:
                         type: string
                         example: "192.168.0.1"
-        '500':
+        "500":
           description: Internal Server Error
           content:
             application/json:
@@ -75,11 +75,11 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Action reaction found
-        '404':
+        "404":
           description: Action reaction not found
-        '500':
+        "500":
           description: Failed to process ActionReaction
     put:
       summary: Update an action reaction by ID
@@ -92,13 +92,13 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Action reaction updated
-        '401':
+        "401":
           description: Unauthenticated
-        '404':
+        "404":
           description: Action reaction not found
-        '500':
+        "500":
           description: Internal Server Error
     delete:
       summary: Delete an action reaction by ID
@@ -111,24 +111,24 @@ paths:
           schema:
             type: string
       responses:
-        '204':
+        "204":
           description: Action reaction deleted
-        '401':
+        "401":
           description: Unauthenticated
-        '404':
+        "404":
           description: Action reaction not found
-        '500':
+        "500":
           description: Internal Server Error
-  /auth:
+  /google/auth:
     get:
       summary: Redirect to Google OAuth 2.0 authentication
       description: >-
         Generates a Google OAuth 2.0 authentication URL and redirects the user to it.
       responses:
-        '302':
+        "302":
           description: Redirects to Google OAuth login page
 
-  /oauth2callback:
+  /google/oauth2callback:
     get:
       summary: Handle Google OAuth 2.0 callback
       description: >-
@@ -142,14 +142,14 @@ paths:
             example: "4/0AX4XfW..."
           description: Authorization code returned by Google after user login.
       responses:
-        '200':
+        "200":
           description: Successful authentication
           content:
             text/plain:
               schema:
                 type: string
                 example: "Authentification réussie, tu peux fermer cette fenêtre."
-        '400':
+        "400":
           description: Bad Request - Missing validation code
           content:
             text/plain:
@@ -179,9 +179,9 @@ paths:
                   format: password
                   example: "password123"
       responses:
-        '201':
+        "201":
           description: User successfully registered
-        '400':
+        "400":
           description: Bad Request - Validation failed
 
   /login:
@@ -202,25 +202,25 @@ paths:
                   format: password
                   example: "password123"
       responses:
-        '200':
+        "200":
           description: User successfully logged in
-        '400':
+        "400":
           description: Bad Request - Missing credentials
-        '401':
+        "401":
           description: Unauthorized - Invalid username or password
 
   /logout:
     get:
       summary: Log out a user
       responses:
-        '200':
+        "200":
           description: User successfully logged out
 
   /profile:
     get:
       summary: Get the user's profile
       responses:
-        '200':
+        "200":
           description: Profile successfully retrieved
           content:
             application/json:
@@ -239,9 +239,9 @@ paths:
                       email:
                         type: string
                         example: "john@example.com"
-        '401':
+        "401":
           description: Unauthorized - User not authenticated
-        '404':
+        "404":
           description: User not found
   /users:
     get:
@@ -249,7 +249,7 @@ paths:
       description: >-
         Returns a list of all users in the system. This route requires the user to be authenticated.
       responses:
-        '200':
+        "200":
           description: Successful response with a list of users
           content:
             application/json:
@@ -270,7 +270,7 @@ paths:
                         email:
                           type: string
                           example: "john@example.com"
-        '401':
+        "401":
           description: Unauthorized - User not authenticated
 components:
   securitySchemes:
@@ -278,7 +278,7 @@ components:
       type: oauth2
       flows:
         clientCredentials:
-          tokenUrl: 'http://example.com/oauth/token'
+          tokenUrl: "http://example.com/oauth/token"
           scopes:
             write: allows modifying resources
             read: allows reading resources
