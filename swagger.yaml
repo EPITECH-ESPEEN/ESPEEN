@@ -1,0 +1,284 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: routes to backend
+    url: http://localhost:8080/api
+info:
+  version: 1.0.0
+  title: ESPEEN AREA
+  description: >-
+    This the swagger for ESPEEN AREA
+security:
+  - application:
+      - read
+      - write
+paths:
+  /actionReactions:
+    get:
+      summary: Get all action reactions
+      operationId: getAllActionReactions
+      responses:
+        "200":
+          description: A list of action reactions
+        "404":
+          description: Action reactions not found
+        "500":
+          description: Failed to process ActionReactions
+    post:
+      summary: Create a new action reaction
+      operationId: createActionReaction
+      responses:
+        "201":
+          description: Action reaction created
+        "401":
+          description: Unauthenticated
+        "500":
+          description: Internal Server Error
+  /about.json:
+    get:
+      summary: Get information from about.json
+      description: >-
+        Reads the about.json file, adds the client's IP to the data, and returns it.
+      responses:
+        "200":
+          description: Successful response with JSON data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  client:
+                    type: object
+                    properties:
+                      host:
+                        type: string
+                        example: "192.168.0.1"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal Server Error"
+  /actionReactions/{id}:
+    get:
+      summary: Get an action reaction by ID
+      operationId: getActionReactionById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the action reaction to retrieve
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Action reaction found
+        "404":
+          description: Action reaction not found
+        "500":
+          description: Failed to process ActionReaction
+    put:
+      summary: Update an action reaction by ID
+      operationId: updateActionReaction
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the action reaction to update
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Action reaction updated
+        "401":
+          description: Unauthenticated
+        "404":
+          description: Action reaction not found
+        "500":
+          description: Internal Server Error
+    delete:
+      summary: Delete an action reaction by ID
+      operationId: deleteActionReaction
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the action reaction to delete
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Action reaction deleted
+        "401":
+          description: Unauthenticated
+        "404":
+          description: Action reaction not found
+        "500":
+          description: Internal Server Error
+  /google/auth:
+    get:
+      summary: Redirect to Google OAuth 2.0 authentication
+      description: >-
+        Generates a Google OAuth 2.0 authentication URL and redirects the user to it.
+      responses:
+        "302":
+          description: Redirects to Google OAuth login page
+
+  /google/oauth2callback:
+    get:
+      summary: Handle Google OAuth 2.0 callback
+      description: >-
+        Processes the callback after Google authentication to retrieve and set the access tokens.
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "4/0AX4XfW..."
+          description: Authorization code returned by Google after user login.
+      responses:
+        "200":
+          description: Successful authentication
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Authentification réussie, tu peux fermer cette fenêtre."
+        "400":
+          description: Bad Request - Missing validation code
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Code de validation manquant"
+
+  /register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "john_doe"
+                email:
+                  type: string
+                  format: email
+                  example: "john@example.com"
+                password:
+                  type: string
+                  format: password
+                  example: "password123"
+      responses:
+        "201":
+          description: User successfully registered
+        "400":
+          description: Bad Request - Validation failed
+
+  /login:
+    post:
+      summary: Log in a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "john_doe"
+                password:
+                  type: string
+                  format: password
+                  example: "password123"
+      responses:
+        "200":
+          description: User successfully logged in
+        "400":
+          description: Bad Request - Missing credentials
+        "401":
+          description: Unauthorized - Invalid username or password
+
+  /logout:
+    get:
+      summary: Log out a user
+      responses:
+        "200":
+          description: User successfully logged out
+
+  /profile:
+    get:
+      summary: Get the user's profile
+      responses:
+        "200":
+          description: Profile successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: "615c0c10a1d4c7123435f660"
+                      username:
+                        type: string
+                        example: "john_doe"
+                      email:
+                        type: string
+                        example: "john@example.com"
+        "401":
+          description: Unauthorized - User not authenticated
+        "404":
+          description: User not found
+  /users:
+    get:
+      summary: Retrieve all users
+      description: >-
+        Returns a list of all users in the system. This route requires the user to be authenticated.
+      responses:
+        "200":
+          description: Successful response with a list of users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                          example: "615c0c10a1d4c7123435f660"
+                        username:
+                          type: string
+                          example: "john_doe"
+                        email:
+                          type: string
+                          example: "john@example.com"
+        "401":
+          description: Unauthorized - User not authenticated
+components:
+  securitySchemes:
+    application:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: "http://example.com/oauth/token"
+          scopes:
+            write: allows modifying resources
+            read: allows reading resources
