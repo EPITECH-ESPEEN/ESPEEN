@@ -24,7 +24,7 @@ usage() {
 rand() {
     local length="$1"
 
-    local chars='A-Za-z0-9'
+    local chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
     local password=''
 
     for ((i = 0; i < length; i++)); do
