@@ -3,44 +3,93 @@ services:
     image: mongo:latest
     env_file:
       - ./.env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${DATABASE_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${DATABASE_PASSWORD}
+      - MONGO_INITDB_DATABASE=${DATABASE_NAME}
     container_name: area-db
     restart: always
+    ports:
+      - "27017:27017"
     networks:
       area:
         ipv4_address: ${DATABASE_HOST}
     volumes:
-      - "./data/:/data/db"
+      - "./data/db/:/data/db"
+      - "./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js"
 
-  backend:
+  server:
     build:
       context: ./backend/
-      dockerfile: ./docker/Dockerfile.backend.prod
+      dockerfile: ./Dockerfile.prod
     env_file:
       - ./.env
+    environment:
+      - PORT=${BACKEND_PORT}
+      - NODE_ENV=DEV
+      - DB_LOCAL_URI=${DB_URI}
+      - DB_URI=${DB_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_TIME=${JWT_EXPIRES_TIME}
     container_name: area-backend
     restart: always
+    ports:
+      - "8080:${BACKEND_PORT}"
     networks:
       area:
         ipv4_address: ${BACKEND_HOST}
+    volumes:
+      - "./backend/:/app/"
     depends_on:
       - db
 
-  frontend:
+  client_mobile:
     build:
-      context: ./frontend/
-      dockerfile: ./docker/Dockerfile.frontend.prod
+      context: ./mobile/
+      dockerfile: ./Dockerfile.prod
     env_file:
       - ./.env
-    container_name: area-frontend
+    environment:
+      - PORT=${MOBILE_PORT}
+      - NODE_ENV=DEV
+      - BACKEND_URL="http://${DOMAIN_NAME}:${BACKEND_PORT}/"
+    container_name: area-mobile
     restart: always
     ports:
-      - "80:80"
+      - "8082:${MOBILE_PORT}"
+    networks:
+      area:
+        ipv4_address: ${MOBILE_HOST}
+    volumes:
+      - "./mobile/:/app/"
+    depends_on:
+      - db
+      - server
+
+  client_web:
+    build:
+      context: ./frontend/
+      dockerfile: ./Dockerfile.prod
+    env_file:
+      - ./.env
+    environment:
+      - PORT=${FRONTEND_PORT}
+      - NODE_ENV=DEV
+      - BACKEND_URL="http://${DOMAIN_NAME}:${BACKEND_PORT}/"
+    container_name: area-web
+    restart: always
+    ports:
+      - "8081:${FRONTEND_PORT}"
     networks:
       area:
         ipv4_address: ${FRONTEND_HOST}
+    volumes:
+      - "./frontend/:/app/"
+      - "./data/mobile/:/opt/mobile_build/"
     depends_on:
       - db
-      - backend
+      - client_mobile
+      - server
 
 networks:
   area:
