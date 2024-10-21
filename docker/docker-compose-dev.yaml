@@ -27,14 +27,27 @@ services:
     environment:
       - PORT=${BACKEND_PORT}
       - NODE_ENV=DEV
+      - FRONT_URL=http://${DOMAIN_NAME}:${FRONTEND_PORT}
       - DB_LOCAL_URI=${DB_URI}
       - DB_URI=${DB_URI}
-      - JWT_SECRET=${JWT_SECRET}
-      - JWT_EXPIRES_TIME=${JWT_EXPIRES_TIME}
+      - JWT_SECRET=${SECRET_ALPHA}
+      - JWT_EXPIRES_TIME=${JWT_EXPIRE_TIME}
+      - COOKIE_EXPIRES_TIME=${COOKIE_EXPIRES_TIME}
+      - CLIENT_ID=${CLIENT_ID}
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - WEATHER_API_KEY=${WEATHER_API_KEY}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - GOOGLE_CALLBACK=${GOOGLE_CALLBACK}
+      - SESSION_SECRET=${SESSION_SECRET}
+      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
+      - DISCORD_CLIENT_SECRET=${DISCORD_CLIENT_SECRET}
+      - DISCORD_URI=${DISCORD_URI}
+      - DISCORD_CALLBACK_URL=${DISCORD_CALLBACK_URL}
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
     container_name: area-backend
     restart: always
     ports:
-      - "${BACKEND_PORT}:${BACKEND_PORT}"
+      - "8080:${BACKEND_PORT}"
     networks:
       area:
         ipv4_address: ${BACKEND_HOST}
@@ -56,7 +69,7 @@ services:
     container_name: area-mobile
     restart: always
     ports:
-      - "${MOBILE_PORT}:${MOBILE_PORT}"
+      - "8082:${MOBILE_PORT}"
     networks:
       area:
         ipv4_address: ${MOBILE_HOST}
@@ -79,7 +92,7 @@ services:
     container_name: area-web
     restart: always
     ports:
-      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+      - "8081:${FRONTEND_PORT}"
     networks:
       area:
         ipv4_address: ${FRONTEND_HOST}
