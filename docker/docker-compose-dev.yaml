@@ -104,6 +104,29 @@ services:
       - client_mobile
       - server
 
+  admin_panel:
+    image: mongo-express:1.0.2-18
+    env_file:
+      - ./.env
+    environment:
+      - ME_CONFIG_MONGODB_URL=${DB_URI}
+      - ME_CONFIG_BASICAUTH_USERNAME=${ADMIN_USERNAME}
+      - ME_CONFIG_BASICAUTH_PASSWORD=${ADMIN_PASSWORD}
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN="true"
+      - ME_CONFIG_OPTIONS_EDITORTHEME="dracula"
+    container_name: area-admin-panel
+    restart: always
+    ports:
+      - "8083:8081"
+    networks:
+      area:
+        ipv4_address: ${ADMIN_PANEL_HOST}
+    depends_on:
+      - db
+      - client_mobile
+      - client_web
+      - server
+
 networks:
   area:
     driver: bridge
