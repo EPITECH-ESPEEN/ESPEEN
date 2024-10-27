@@ -23,22 +23,36 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE}}
 
-        # That next one is done manually to include the submodules and isolate prod from dev (.mirrorignore)
-      - name: Mirror repository to target repo
+      - name: Configure
         run: |
-          cat .mirrorignore >> ./.gitignore
-          rm -rf .git/modules/*
-          rm -f .gitmodules
-          rm -f backend/.git
-          rm -f frontend/.git
-          rm -f mobile/.git
-          mkdir -p ~/.ssh/
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          export GIT_SSH_COMMAND="ssh -v -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -l git"
-          git remote add mirror "${{ secrets.TARGET_REPOSITORY }}"
-          git push --tags --force --prune mirror "refs/remotes/origin/*:refs/heads/*"
-          git remote remove "mirror"
+          export ENV_PASSWORD="${{ secrets.ENV_PASSWORD }}"
+          ./configure -m dev -n
+
+      - name: Install
+        run: |
+          sudo pip3 install -r ./scripts/requirements.txt
+
+      - name: Start docker
+        run: |
+          docker compose up -d
+
+      - name: Run tests
+        id: run_tests
+        run: |
+          echo "TEST_OUTPUT<<EOF" >> "$GITHUB_OUTPUT"
+          cd ./scripts/ && python3 ./run_tests.py 2>> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Stop docker compose
+        run: |
+          docker compose down
+
+      - uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url:
+            ${{ secrets.TARGET_REPOSITORY }}
+          ssh_private_key:
+            ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Send build report to Discord
         uses: tsickert/discord-webhook@v6.0.0
@@ -55,6 +69,12 @@ jobs:
           embed-description: "**${{ github.event.repository.owner.name }}/${{ github.event.repository.name }}**
 
 [${{ github.event.head_commit.message }}](${{ github.event.head_commit.url }})
+
+```ansi
+
+${{ steps.run_tests.outputs.TEST_OUTPUT }}
+
+```
 
 Commit ID: ${{ github.event.head_commit.id }}
 
@@ -78,6 +98,12 @@ Find logs [here](https://github.com/EPITECH-ESPEEN/ESPEEN/actions/workflows/cicd
           embed-description: "**${{ github.event.repository.owner.name }}/${{ github.event.repository.name }}**
 
 [${{ github.event.head_commit.message }}](${{ github.event.head_commit.url }})
+
+```ansi
+
+${{ steps.run_tests.outputs.TEST_OUTPUT }}
+
+```
 
 Commit ID: ${{ github.event.head_commit.id }}
 
