@@ -40,7 +40,7 @@ jobs:
         id: run_tests
         run: |
           echo "TEST_OUTPUT<<EOF" >> "$GITHUB_OUTPUT"
-          cd ./scripts/ && python3 ./run_tests.py >> "$GITHUB_OUTPUT"
+          cd ./scripts/ && python3 ./run_tests.py 2>> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Stop docker compose
