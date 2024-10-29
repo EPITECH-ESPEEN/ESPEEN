@@ -4,9 +4,14 @@ on:
   push:
     branches:
       - main
+      - docker-scripts
     paths-ignore:
       - "**.md"
       - "**.txt"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test_and_mirror_code:
@@ -30,6 +35,7 @@ jobs:
 
       - name: Install
         run: |
+          sudo apt-get install -y openssh-client zip
           sudo pip3 install -r ./scripts/requirements.txt
 
       - name: Start docker
@@ -47,66 +53,81 @@ jobs:
         run: |
           docker compose down
 
-      - uses: pixta-dev/repository-mirroring-action@v1
-        with:
-          target_repo_url:
-            ${{ secrets.TARGET_REPOSITORY }}
-          ssh_private_key:
-            ${{ secrets.SSH_PRIVATE_KEY }}
+      # - uses: pixta-dev/repository-mirroring-action@v1
+      #   with:
+      #     target_repo_url:
+      #       ${{ secrets.TARGET_REPOSITORY }}
+      #     ssh_private_key:
+      #       ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Send build report to Discord
-        uses: tsickert/discord-webhook@v6.0.0
-        with:
-          webhook-url: ${{ secrets.WEBHOOK_URL }}
-          username: "Github - ${{ github.actor }}"
-          avatar-url: "https://github.com/${{ github.actor }}.png"
-          embed-title: ":white_check_mark: **Action Successful** :white_check_mark:"
-          embed-author-name: ${{ github.actor }}
-          embed-color: 7844437
-          embed-url: "${{ github.event.head_commit.url }}"
-          embed-author-url: "https://github.com/${{ github.actor }}"
-          embed-author-icon-url: "https://github.com/${{ github.actor }}.png"
-          embed-description: "**${{ github.event.repository.owner.name }}/${{ github.event.repository.name }}**
+      - name: Deploy modification to production repository
+        run: |
+          # Setting up SSH
+          SSH_KEY=$(mktemp)
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > "$SSH_KEY"
+          # Zipping the actual code itself
+          ZIP_FILE=$(mktemp tmp.XXXXXXXX.zip)
+          zip -r "$ZIP_FILE" ./backend/ ./frontend/ ./mobile/ ./docker/ ./.env ./init-mongo.js
+          scp -i "$SSH_KEY" "$ZIP_FILE" ${{ secrets.SSH_USER }}@${{ secrets.DEPLOYEMENT_HOST }}:"$ZIP_FILE"
+          ssh -i "$SSH_KEY" ${{ secrets.SSH_USER }}@${{ secrets.DEPLOYEMENT_HOST }} << 'EOF'
+            rm -rf /opt/espeen/espeen/*
+            unzip "$ZIP_FILE" -d /opt/espeen/espeen/
+            sudo systemctl restart espeen
+          EOF
 
-[${{ github.event.head_commit.message }}](${{ github.event.head_commit.url }})
+#       - name: Send build report to Discord
+#         uses: tsickert/discord-webhook@v6.0.0
+#         with:
+#           webhook-url: ${{ secrets.WEBHOOK_URL }}
+#           username: "Github - ${{ github.actor }}"
+#           avatar-url: "https://github.com/${{ github.actor }}.png"
+#           embed-title: ":white_check_mark: **Action Successful** :white_check_mark:"
+#           embed-author-name: ${{ github.actor }}
+#           embed-color: 7844437
+#           embed-url: "${{ github.event.head_commit.url }}"
+#           embed-author-url: "https://github.com/${{ github.actor }}"
+#           embed-author-icon-url: "https://github.com/${{ github.actor }}.png"
+#           embed-description: "**${{ github.event.repository.owner.name }}/${{ github.event.repository.name }}**
 
-```ansi
+# [${{ github.event.head_commit.message }}](${{ github.event.head_commit.url }})
 
-${{ steps.run_tests.outputs.TEST_OUTPUT }}
+# ```ansi
 
-```
+# ${{ steps.run_tests.outputs.TEST_OUTPUT }}
 
-Commit ID: ${{ github.event.head_commit.id }}
+# ```
 
-Pushed by ${{ github.event.pusher.email }}
+# Commit ID: ${{ github.event.head_commit.id }}
 
-Find logs [here](https://github.com/EPITECH-ESPEEN/ESPEEN/actions/workflows/cicd.yaml)"
+# Pushed by ${{ github.event.pusher.email }}
 
-      - name: Send error message to Discord on failure
-        if: always() && failure()
-        uses: tsickert/discord-webhook@v6.0.0
-        with:
-          webhook-url: ${{ secrets.WEBHOOK_URL }}
-          username: "Github - ${{ github.actor }}"
-          avatar-url: "https://github.com/${{ github.actor }}.png"
-          embed-title: ":x: **Action failed** :x:"
-          embed-author-name: ${{ github.actor }}
-          embed-color: 16273737
-          embed-url: "${{ github.event.head_commit.url }}"
-          embed-author-url: "https://github.com/${{ github.actor }}"
-          embed-author-icon-url: "https://github.com/${{ github.actor }}.png"
-          embed-description: "**${{ github.event.repository.owner.name }}/${{ github.event.repository.name }}**
+# Find logs [here](https://github.com/EPITECH-ESPEEN/ESPEEN/actions/workflows/cicd.yaml)"
 
-[${{ github.event.head_commit.message }}](${{ github.event.head_commit.url }})
+#       - name: Send error message to Discord on failure
+#         if: always() && failure()
+#         uses: tsickert/discord-webhook@v6.0.0
+#         with:
+#           webhook-url: ${{ secrets.WEBHOOK_URL }}
+#           username: "Github - ${{ github.actor }}"
+#           avatar-url: "https://github.com/${{ github.actor }}.png"
+#           embed-title: ":x: **Action failed** :x:"
+#           embed-author-name: ${{ github.actor }}
+#           embed-color: 16273737
+#           embed-url: "${{ github.event.head_commit.url }}"
+#           embed-author-url: "https://github.com/${{ github.actor }}"
+#           embed-author-icon-url: "https://github.com/${{ github.actor }}.png"
+#           embed-description: "**${{ github.event.repository.owner.name }}/${{ github.event.repository.name }}**
 
-```ansi
+# [${{ github.event.head_commit.message }}](${{ github.event.head_commit.url }})
 
-${{ steps.run_tests.outputs.TEST_OUTPUT }}
+# ```ansi
 
-```
+# ${{ steps.run_tests.outputs.TEST_OUTPUT }}
 
-Commit ID: ${{ github.event.head_commit.id }}
+# ```
 
-Pushed by ${{ github.event.pusher.email }}
+# Commit ID: ${{ github.event.head_commit.id }}
 
-Find logs [here](https://github.com/EPITECH-ESPEEN/ESPEEN/actions/workflows/cicd.yaml)"
+# Pushed by ${{ github.event.pusher.email }}
+
+# Find logs [here](https://github.com/EPITECH-ESPEEN/ESPEEN/actions/workflows/cicd.yaml)"
