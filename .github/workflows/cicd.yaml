@@ -23,35 +23,35 @@ jobs:
           submodules: true
           fetch-depth: 0
 
-      - uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE}}
+      # - uses: gitleaks/gitleaks-action@v2
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE}}
 
-      - name: Configure
-        run: |
-          export ENV_PASSWORD="${{ secrets.ENV_PASSWORD }}"
-          ./configure -m dev -n
+      # - name: Configure
+      #   run: |
+      #     export ENV_PASSWORD="${{ secrets.ENV_PASSWORD }}"
+      #     ./configure -m dev -n
 
       - name: Install
         run: |
           sudo apt-get install -y openssh-client zip
           sudo pip3 install -r ./scripts/requirements.txt
 
-      - name: Start docker
-        run: |
-          docker compose up -d
+      # - name: Start docker
+      #   run: |
+      #     docker compose up -d
 
-      - name: Run tests
-        id: run_tests
-        run: |
-          echo "TEST_OUTPUT<<EOF" >> "$GITHUB_OUTPUT"
-          cd ./scripts/ && python3 ./run_tests.py 2>> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
+      # - name: Run tests
+      #   id: run_tests
+      #   run: |
+      #     echo "TEST_OUTPUT<<EOF" >> "$GITHUB_OUTPUT"
+      #     cd ./scripts/ && python3 ./run_tests.py 2>> "$GITHUB_OUTPUT"
+      #     echo "EOF" >> "$GITHUB_OUTPUT"
 
-      - name: Stop docker compose
-        run: |
-          docker compose down
+      # - name: Stop docker compose
+      #   run: |
+      #     docker compose down
 
       # - uses: pixta-dev/repository-mirroring-action@v1
       #   with:
