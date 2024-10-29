@@ -69,12 +69,16 @@ jobs:
           ZIP_FILE=$(mktemp tmp.XXXXXXXX.zip)
           rm "$ZIP_FILE"
           zip -r "$ZIP_FILE" ./backend/ ./frontend/ ./mobile/ ./docker/ ./.env ./init-mongo.js
-          scp -i "$SSH_KEY" "$ZIP_FILE" ${{ secrets.SSH_USER }}@${{ secrets.DEPLOYEMENT_HOST }}:"$ZIP_FILE"
-          ssh -i "$SSH_KEY" ${{ secrets.SSH_USER }}@${{ secrets.DEPLOYEMENT_HOST }} << 'EOF'
+          scp -i -o StrictHostKeyChecking=no "$SSH_KEY" "$ZIP_FILE" ${{ secrets.SSH_USER }}@${{ secrets.DEPLOYEMENT_HOST }}:"$ZIP_FILE"
+          ssh -i -o StrictHostKeyChecking=no "$SSH_KEY" ${{ secrets.SSH_USER }}@${{ secrets.DEPLOYEMENT_HOST }} << 'EOF'
             rm -rf /opt/espeen/espeen/*
             unzip "$ZIP_FILE" -d /opt/espeen/espeen/
             sudo systemctl restart espeen
           EOF
+
+      - name: Get NTFY call
+        run: |
+          curl -d "Github action over" ${{ secrets.NTFY_BASE_URL }}/logs
 
 #       - name: Send build report to Discord
 #         uses: tsickert/discord-webhook@v6.0.0
