@@ -15,7 +15,8 @@ services:
       area:
         ipv4_address: ${DATABASE_HOST}
     volumes:
-      - "./data/:/data/db"
+      - "./data/db/:/data/db"
+      - "./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js"
 
   server:
     build:
@@ -26,6 +27,23 @@ services:
     environment:
       - PORT=${BACKEND_PORT}
       - NODE_ENV=DEV
+      - FRONT_URL=http://${DOMAIN_NAME}:${FRONTEND_PORT}
+      - DB_LOCAL_URI=${DB_URI}
+      - DB_URI=${DB_URI}
+      - JWT_SECRET=${SECRET_ALPHA}
+      - JWT_EXPIRES_TIME=${JWT_EXPIRE_TIME}
+      - COOKIE_EXPIRES_TIME=${COOKIE_EXPIRES_TIME}
+      - CLIENT_ID=${CLIENT_ID}
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - WEATHER_API_KEY=${WEATHER_API_KEY}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - GOOGLE_CALLBACK=${GOOGLE_CALLBACK}
+      - SESSION_SECRET=${SECRET_BRAVO}
+      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
+      - DISCORD_CLIENT_SECRET=${DISCORD_CLIENT_SECRET}
+      - DISCORD_URI=${DISCORD_URI}
+      - DISCORD_CALLBACK_URL=${DISCORD_CALLBACK_URL}
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
     container_name: area-backend
     restart: always
     ports:
@@ -47,6 +65,7 @@ services:
     environment:
       - PORT=${MOBILE_PORT}
       - NODE_ENV=DEV
+      - BACKEND_URL="http://${DOMAIN_NAME}:${BACKEND_PORT}/"
     container_name: area-mobile
     restart: always
     ports:
@@ -69,6 +88,7 @@ services:
     environment:
       - PORT=${FRONTEND_PORT}
       - NODE_ENV=DEV
+      - BACKEND_URL="http://${DOMAIN_NAME}:${BACKEND_PORT}/"
     container_name: area-web
     restart: always
     ports:
@@ -78,9 +98,34 @@ services:
         ipv4_address: ${FRONTEND_HOST}
     volumes:
       - "./frontend/:/app/"
+      # - "./data/mobile/:/opt/mobile_build/"
+      # Don't you dare
     depends_on:
       - db
       - client_mobile
+      - server
+
+  admin_panel:
+    image: mongo-express:1.0.2-18
+    env_file:
+      - ./.env
+    environment:
+      - ME_CONFIG_MONGODB_URL=${DB_URI}
+      - ME_CONFIG_BASICAUTH_USERNAME=${ADMIN_USERNAME}
+      - ME_CONFIG_BASICAUTH_PASSWORD=${ADMIN_PASSWORD}
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN="true"
+      - ME_CONFIG_OPTIONS_EDITORTHEME="dracula"
+    container_name: area-admin-panel
+    restart: always
+    ports:
+      - "8083:8081"
+    networks:
+      area:
+        ipv4_address: ${ADMIN_PANEL_HOST}
+    depends_on:
+      - db
+      - client_mobile
+      - client_web
       - server
 
 networks:

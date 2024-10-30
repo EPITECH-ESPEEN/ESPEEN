@@ -3,7 +3,7 @@
 echo "╭────────────────────────────────────────────────╮"
 echo "│  ▗▄▄▖ ▗▄▖ ▗▖  ▗▖▗▄▄▄▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▖ ▗▄▄▄▖ │"
 echo "│ ▐▌   ▐▌ ▐▌▐▛▚▖▐▌▐▌     █  ▐▌   ▐▌ ▐▌▐▌ ▐▌▐▌    │"
-echo "│ ▐▌   ▐▌ ▐▌▐▌ ▝▜▌▐▛▀▀▘  █  ▐▌▝▜▌▐▌ ▐▌▐▛▀▚▖▐▛▀▀▘ │"
+echo "│ ▐▌   ▐▌ ▐▌▐▌ ▝▜▌▐▛▀▀▘  █  ▐▌▝▜▌▐▌ ▐▌▐▛▀▚▖▐▛▀▀  │"
 echo "│ ▝▚▄▄▖▝▚▄▞▘▐▌  ▐▌▐▌   ▗▄█▄▖▝▚▄▞▘▝▚▄▞▘▐▌ ▐▌▐▙▄▄▖ │"
 echo "╰────────────────────────────────────────────────╯"
 echo
@@ -24,7 +24,7 @@ usage() {
 rand() {
     local length="$1"
 
-    local chars='A-Za-z0-9'
+    local chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
     local password=''
 
     for ((i = 0; i < length; i++)); do
@@ -65,12 +65,6 @@ if [[ -z "$mode" ]] || [[ ! "${modes[@]}" =~ "$mode" ]]; then
     done
 fi
 
-if [ "$mode" = "prod" ]; then
-    echo "Running in production mode is not done rn."
-    echo "Please run in dev mode"
-    exit 1
-fi
-
 echo "Setting up project, cleaning previous runs..."
 
 SUDO=""
@@ -108,14 +102,22 @@ source "$outfile"
 
 variable_names=$(grep -oE '^[a-zA-Z_][a-zA-Z0-9_]*=' "$outfile" | sed 's/=$//')
 
+cp ./docker/init-mongo.js ./init-mongo.js
+
+sed -i "s/DATABASE_NAME/$DATABASE_NAME/g" ./init-mongo.js
+
 {
     for var in $variable_names; do
         echo "$var=\"${!var}\""
     done
 } > .env
 
-if [ "$mode" = "dev" ]; then
-    cp ./docker/docker-compose-dev.yaml docker-compose.yaml
-else
-    cp ./docker/docker-compose-prod.yaml docker-compose.yaml
-fi
+# if [ "$mode" = "dev" ]; then
+# Due to lack of time, full implementation of prod will not be done.
+# However, dev work just as well
+cp ./docker/docker-compose-dev.yaml docker-compose.yaml
+# else
+#     cp ./docker/docker-compose-prod.yaml docker-compose.yaml
+# fi
+
+echo "[+] All done ! Run \"$SUDO docker compose up\""
