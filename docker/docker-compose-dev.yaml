@@ -1,24 +1,4 @@
 services:
-  # Using online DB
-  # db:
-  #   image: mongo:latest
-  #   env_file:
-  #     - ./.env
-  #   environment:
-  #     - MONGO_INITDB_ROOT_USERNAME=${DATABASE_USERNAME}
-  #     - MONGO_INITDB_ROOT_PASSWORD=${DATABASE_PASSWORD}
-  #     - MONGO_INITDB_DATABASE=${DATABASE_NAME}
-  #   container_name: area-db
-  #   restart: always
-  #   ports:
-  #     - "27017:27017"
-  #   networks:
-  #     area:
-  #       ipv4_address: ${DATABASE_HOST}
-  #   volumes:
-  #     - "./data/db/:/data/db"
-  #     - "./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js"
-
   server:
     build:
       context: ./
@@ -29,8 +9,6 @@ services:
       - PORT=${BACKEND_PORT}
       - NODE_ENV=DEV
       - FRONT_URL=http://${DOMAIN_NAME}:${FRONTEND_PORT}
-      - DB_LOCAL_URI=${DB_URI}
-      - DB_URI=${DB_URI}
       - JWT_SECRET=${SECRET_ALPHA}
       - JWT_EXPIRES_TIME=${JWT_EXPIRE_TIME}
       - COOKIE_EXPIRES_TIME=${COOKIE_EXPIRES_TIME}
@@ -66,8 +44,6 @@ services:
         ipv4_address: ${BACKEND_HOST}
     volumes:
       - "./backend/:/app/"
-    depends_on:
-      - db
 
   client_mobile:
     build:
@@ -89,7 +65,6 @@ services:
     volumes:
       - "./mobile/:/app/"
     depends_on:
-      - db
       - server
 
   client_web:
@@ -114,32 +89,31 @@ services:
       # - "./data/mobile/:/opt/mobile_build/"
       # Don't you dare
     depends_on:
-      - db
       - client_mobile
       - server
 
-  admin_panel:
-    image: mongo-express:1.0.2-18
-    env_file:
-      - ./.env
-    environment:
-      - ME_CONFIG_MONGODB_URL=${DB_URI}
-      - ME_CONFIG_BASICAUTH_USERNAME=${ADMIN_USERNAME}
-      - ME_CONFIG_BASICAUTH_PASSWORD=${ADMIN_PASSWORD}
-      - ME_CONFIG_MONGODB_ENABLE_ADMIN="true"
-      - ME_CONFIG_OPTIONS_EDITORTHEME="dracula"
-    container_name: area-admin-panel
-    restart: always
-    ports:
-      - "8083:8081"
-    networks:
-      area:
-        ipv4_address: ${ADMIN_PANEL_HOST}
-    depends_on:
-      - db
-      - client_mobile
-      - client_web
-      - server
+  # Due to the removal of local DB, the admin panel is kinda unrelevant
+  # admin_panel:
+  #   image: mongo-express:1.0.2-18
+  #   env_file:
+  #     - ./.env
+  #   environment:
+  #     - ME_CONFIG_MONGODB_URL=${DB_URI}
+  #     - ME_CONFIG_BASICAUTH_USERNAME=${ADMIN_USERNAME}
+  #     - ME_CONFIG_BASICAUTH_PASSWORD=${ADMIN_PASSWORD}
+  #     - ME_CONFIG_MONGODB_ENABLE_ADMIN="true"
+  #     - ME_CONFIG_OPTIONS_EDITORTHEME="dracula"
+  #   container_name: area-admin-panel
+  #   restart: always
+  #   ports:
+  #     - "8083:8081"
+  #   networks:
+  #     area:
+  #       ipv4_address: ${ADMIN_PANEL_HOST}
+  #   depends_on:
+  #     - client_mobile
+  #     - client_web
+  #     - server
 
 networks:
   area:
