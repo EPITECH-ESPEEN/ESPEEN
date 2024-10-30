@@ -62,10 +62,9 @@ jobs:
 
       - name: Deploy modification to production repository
         run: |
-          # Setting up SSH
           SSH_KEY=$(mktemp)
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > "$SSH_KEY"
-          # Zipping the actual code itself
+          echo "${{ secrets.DEPLOYEMENT_PRIVATE_KEY }}" > "$SSH_KEY"
+
           ZIP_FILE=$(mktemp tmp.XXXXXXXX.zip)
           rm "$ZIP_FILE"
           zip -r "$ZIP_FILE" ./backend/ ./frontend/ ./mobile/ ./docker/ ./.env ./init-mongo.js
