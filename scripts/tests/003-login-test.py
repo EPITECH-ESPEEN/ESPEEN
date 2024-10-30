@@ -57,10 +57,11 @@ def run():
     s = Session()
 
     for test in tests:
-        print(f"=== Test: {test.get('name')} ===")
+        output += f"=== Test: {test.get('name')} ==="
         request = s.post("http://localhost:8080/api/register", data=test.get("test"))
         if request.status_code != test.get("expected_code"):
             output += f"Expected error code {test.get('expected_code')} but got {request.status_code}\n"
+            output += f"Content: \n{request.text}\n"
             return (False, output)
         else:
             output += f"Got expected {request.status_code} error code\n"
