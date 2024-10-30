@@ -68,11 +68,10 @@ jobs:
           ZIP_FILE=$(mktemp /tmp/tmp.XXXXXXXX.zip)
           rm "$ZIP_FILE"
           zip -r "$ZIP_FILE" ./backend/ ./frontend/ ./mobile/ ./docker/ ./.env ./init-mongo.js
-          scp -i "$SSH_KEY" -o StrictHostKeyChecking=no "$ZIP_FILE" ${{ secrets.SSH_USER }}@${{ secrets.DEPLOYEMENT_HOST }}:"$ZIP_FILE"
+          scp -i "$SSH_KEY" -o StrictHostKeyChecking=no "$ZIP_FILE" ${{ secrets.SSH_USER }}@${{ secrets.DEPLOYEMENT_HOST }}:"/tmp/espeen.zip"
           ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.DEPLOYEMENT_HOST }} << 'EOF'
             bash -c "rm -rf /opt/espeen/espeen/*"
-            echo "$ZIP_FILE"
-            unzip "$ZIP_FILE" -d /opt/espeen/espeen/
+            unzip "/tmp/espeen.zip" -d /opt/espeen/espeen/
             sudo systemctl restart espeen
           EOF
 
