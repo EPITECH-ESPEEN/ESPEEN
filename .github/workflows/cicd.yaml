@@ -65,7 +65,7 @@ jobs:
           SSH_KEY=$(mktemp)
           echo "${{ secrets.DEPLOYEMENT_PRIVATE_KEY }}" > "$SSH_KEY"
 
-          ZIP_FILE=$(mktemp tmp.XXXXXXXX.zip)
+          ZIP_FILE=$(mktemp /tmp/tmp.XXXXXXXX.zip)
           rm "$ZIP_FILE"
           zip -r "$ZIP_FILE" ./backend/ ./frontend/ ./mobile/ ./docker/ ./.env ./init-mongo.js
           scp -i "$SSH_KEY" -o StrictHostKeyChecking=no "$ZIP_FILE" ${{ secrets.SSH_USER }}@${{ secrets.DEPLOYEMENT_HOST }}:"$ZIP_FILE"
