@@ -28,10 +28,10 @@ jobs:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       #     GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE}}
 
-      # - name: Configure
-      #   run: |
-      #     export ENV_PASSWORD="${{ secrets.ENV_PASSWORD }}"
-      #     ./configure -m dev -n
+      - name: Configure
+        run: |
+          export ENV_PASSWORD="${{ secrets.ENV_PASSWORD }}"
+          ./configure -m dev -n
 
       - name: Install
         run: |
