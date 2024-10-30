@@ -69,14 +69,15 @@ jobs:
           ZIP_FILE=$(mktemp tmp.XXXXXXXX.zip)
           rm "$ZIP_FILE"
           zip -r "$ZIP_FILE" ./backend/ ./frontend/ ./mobile/ ./docker/ ./.env ./init-mongo.js
-          scp -i -o StrictHostKeyChecking=no "$SSH_KEY" "$ZIP_FILE" ${{ secrets.SSH_USER }}@${{ secrets.DEPLOYEMENT_HOST }}:"$ZIP_FILE"
-          ssh -i -o StrictHostKeyChecking=no "$SSH_KEY" ${{ secrets.SSH_USER }}@${{ secrets.DEPLOYEMENT_HOST }} << 'EOF'
+          scp -i "$SSH_KEY" -o StrictHostKeyChecking=no "$ZIP_FILE" ${{ secrets.SSH_USER }}@${{ secrets.DEPLOYEMENT_HOST }}:"$ZIP_FILE"
+          ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.DEPLOYEMENT_HOST }} << 'EOF'
             rm -rf /opt/espeen/espeen/*
             unzip "$ZIP_FILE" -d /opt/espeen/espeen/
             sudo systemctl restart espeen
           EOF
 
       - name: Get NTFY call
+        if: always()
         run: |
           curl -d "Github action over" ${{ secrets.NTFY_BASE_URL }}/logs
 
