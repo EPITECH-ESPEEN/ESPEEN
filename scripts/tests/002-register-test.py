@@ -73,10 +73,10 @@ def run():
 
     for test in tests:
         print(f"=== Test: {test.get('name')} ===")
-        output = s.post("http://localhost:8080/api/register", data=test.get("test"))
-        if output.status_code != test.get("expected_code"):
-            output += f"Expected error code {test.get('expected_code')} but got {output.status_code}\n"
+        request = s.post("http://localhost:8080/api/register", data=test.get("test"))
+        if request.status_code != test.get("expected_code"):
+            output += f"Expected error code {test.get('expected_code')} but got {request.status_code}\n"
             return (False, output)
         else:
-            output += f"Got expected {output.status_code} error code\n"
+            output += f"Got expected {request.status_code} error code\n"
     return (True, output)
