@@ -38,10 +38,6 @@ jobs:
           sudo apt-get install -y openssh-client zip
           sudo pip3 install -r ./scripts/requirements.txt
 
-      - name: Get sample docker status
-        run: |
-          timeout 3m docker compose up
-
       - name: Start docker
         run: |
           docker compose up -d
