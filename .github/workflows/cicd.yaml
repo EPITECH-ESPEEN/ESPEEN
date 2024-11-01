@@ -94,7 +94,7 @@ jobs:
           git clone "${{ secrets.TARGET_REPOSITORY }}" /tmp/espeen_prod/
           rm -rf ./.git/
           cp -r /tmp/espeen_prod/.git/ ./.git/
-          tree
+          tree -a
           git add .
           git commit -m "${{ github.event.head_commit.message }}"
           git push
