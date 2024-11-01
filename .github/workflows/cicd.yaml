@@ -33,33 +33,33 @@ jobs:
           export ENV_PASSWORD="${{ secrets.ENV_PASSWORD }}"
           ./configure -m dev -n
 
-      # - name: Install
-        # run: |
-          # sudo apt-get install -y openssh-client zip
-          # sudo pip3 install -r ./scripts/requirements.txt
+      - name: Install
+        run: |
+          sudo apt-get install -y openssh-client zip
+          sudo pip3 install -r ./scripts/requirements.txt
 
-      # - name: Start docker
-        # run: |
-          # docker compose up -d
+      - name: Start docker
+        run: |
+          docker compose up -d
 
-      # - name: Run tests
-      #   id: run_tests
-      #   run: |
-      #     set +e
-      #     echo "TEST_OUTPUT<<EOF" >> "$GITHUB_OUTPUT"
-      #     cd ./scripts/
+      - name: Run tests
+        id: run_tests
+        run: |
+          set +e
+          echo "TEST_OUTPUT<<EOF" >> "$GITHUB_OUTPUT"
+          cd ./scripts/
 
-      #     python3 ./run_tests.py 2>> "$GITHUB_OUTPUT"
-      #     exit_code=$?
+          python3 ./run_tests.py 2>> "$GITHUB_OUTPUT"
+          exit_code=$?
 
-      #     echo "EOF" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
 
-      #     set -e
-      #     exit $exit_code
+          set -e
+          exit $exit_code
 
-      # - name: Stop docker compose
-      #   run: |
-      #     docker compose down
+      - name: Stop docker compose
+        run: |
+          docker compose down
 
       - name: Deploy modification to production repository
         run: |
@@ -99,59 +99,59 @@ jobs:
           git commit -m "${{ github.event.head_commit.message }}"
           git push
 
-#       - name: Send build report to Discord
-#         uses: tsickert/discord-webhook@v6.0.0
-#         with:
-#           webhook-url: ${{ secrets.WEBHOOK_URL }}
-#           username: "Github - ${{ github.actor }}"
-#           avatar-url: "https://github.com/${{ github.actor }}.png"
-#           embed-title: ":white_check_mark: **Action Successful** :white_check_mark:"
-#           embed-author-name: ${{ github.actor }}
-#           embed-color: 7844437
-#           embed-url: "${{ github.event.head_commit.url }}"
-#           embed-author-url: "https://github.com/${{ github.actor }}"
-#           embed-author-icon-url: "https://github.com/${{ github.actor }}.png"
-#           embed-description: "**${{ github.event.repository.owner.name }}/${{ github.event.repository.name }}**
+      - name: Send build report to Discord
+        uses: tsickert/discord-webhook@v6.0.0
+        with:
+          webhook-url: ${{ secrets.WEBHOOK_URL }}
+          username: "Github - ${{ github.actor }}"
+          avatar-url: "https://github.com/${{ github.actor }}.png"
+          embed-title: ":white_check_mark: **Action Successful** :white_check_mark:"
+          embed-author-name: ${{ github.actor }}
+          embed-color: 7844437
+          embed-url: "${{ github.event.head_commit.url }}"
+          embed-author-url: "https://github.com/${{ github.actor }}"
+          embed-author-icon-url: "https://github.com/${{ github.actor }}.png"
+          embed-description: "**${{ github.event.repository.owner.name }}/${{ github.event.repository.name }}**
 
-# [${{ github.event.head_commit.message }}](${{ github.event.head_commit.url }})
+[${{ github.event.head_commit.message }}](${{ github.event.head_commit.url }})
 
-# ```ansi
+```ansi
 
-# ${{ steps.run_tests.outputs.TEST_OUTPUT }}
+${{ steps.run_tests.outputs.TEST_OUTPUT }}
 
-# ```
+```
 
-# Commit ID: ${{ github.event.head_commit.id }}
+Commit ID: ${{ github.event.head_commit.id }}
 
-# Pushed by ${{ github.event.pusher.email }}
+Pushed by ${{ github.event.pusher.email }}
 
-# Find logs [here](https://github.com/EPITECH-ESPEEN/ESPEEN/actions/workflows/cicd.yaml)"
+Find logs [here](https://github.com/EPITECH-ESPEEN/ESPEEN/actions/workflows/cicd.yaml)"
 
-#       - name: Send error message to Discord on failure
-#         if: always() && failure()
-#         uses: tsickert/discord-webhook@v6.0.0
-#         with:
-#           webhook-url: ${{ secrets.WEBHOOK_URL }}
-#           username: "Github - ${{ github.actor }}"
-#           avatar-url: "https://github.com/${{ github.actor }}.png"
-#           embed-title: ":x: **Action failed** :x:"
-#           embed-author-name: ${{ github.actor }}
-#           embed-color: 16273737
-#           embed-url: "${{ github.event.head_commit.url }}"
-#           embed-author-url: "https://github.com/${{ github.actor }}"
-#           embed-author-icon-url: "https://github.com/${{ github.actor }}.png"
-#           embed-description: "**${{ github.event.repository.owner.name }}/${{ github.event.repository.name }}**
+      - name: Send error message to Discord on failure
+        if: always() && failure()
+        uses: tsickert/discord-webhook@v6.0.0
+        with:
+          webhook-url: ${{ secrets.WEBHOOK_URL }}
+          username: "Github - ${{ github.actor }}"
+          avatar-url: "https://github.com/${{ github.actor }}.png"
+          embed-title: ":x: **Action failed** :x:"
+          embed-author-name: ${{ github.actor }}
+          embed-color: 16273737
+          embed-url: "${{ github.event.head_commit.url }}"
+          embed-author-url: "https://github.com/${{ github.actor }}"
+          embed-author-icon-url: "https://github.com/${{ github.actor }}.png"
+          embed-description: "**${{ github.event.repository.owner.name }}/${{ github.event.repository.name }}**
 
-# [${{ github.event.head_commit.message }}](${{ github.event.head_commit.url }})
+[${{ github.event.head_commit.message }}](${{ github.event.head_commit.url }})
 
-# ```ansi
+```ansi
 
-# ${{ steps.run_tests.outputs.TEST_OUTPUT }}
+${{ steps.run_tests.outputs.TEST_OUTPUT }}
 
-# ```
+```
 
-# Commit ID: ${{ github.event.head_commit.id }}
+Commit ID: ${{ github.event.head_commit.id }}
 
-# Pushed by ${{ github.event.pusher.email }}
+Pushed by ${{ github.event.pusher.email }}
 
-# Find logs [here](https://github.com/EPITECH-ESPEEN/ESPEEN/actions/workflows/cicd.yaml)"
+Find logs [here](https://github.com/EPITECH-ESPEEN/ESPEEN/actions/workflows/cicd.yaml)"
