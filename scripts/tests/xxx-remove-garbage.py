@@ -13,6 +13,6 @@ def run():
     s.headers.update({"Autorization": "Bearer " + token})
 
     # cookies should be all good
-    output += s.delete("/user").text + '\n'
+    output += s.delete("http://localhost:8080/user").text + '\n'
 
     return (True, "=== All good ===")
