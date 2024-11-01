@@ -9,7 +9,7 @@ def run():
     output = ""
     s = Session()
 
-    token = s.post("http://localhost:8080/api/login", json=user).json.get("access_token")
+    token = s.post("http://localhost:8080/api/login", json=user).json().get("access_token")
     s.headers.update({"Autorization": "Bearer " + token})
 
     # cookies should be all good
