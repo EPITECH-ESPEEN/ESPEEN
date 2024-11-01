@@ -6,7 +6,7 @@ import os
 INITIAL_TIMEOUT = 60
 
 def main() -> int:
-    # time.sleep(INITIAL_TIMEOUT)
+    time.sleep(INITIAL_TIMEOUT)
     output = ""
     status = True
 
