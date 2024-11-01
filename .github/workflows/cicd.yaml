@@ -71,7 +71,7 @@ jobs:
           zip -r "$ZIP_FILE" ./backend/ ./frontend/ ./mobile/ ./docker/ ./.env ./init-mongo.js
           scp -i "$SSH_KEY" -o StrictHostKeyChecking=no "$ZIP_FILE" ${{ secrets.SSH_USER }}@${{ secrets.DEPLOYEMENT_HOST }}:"/tmp/espeen.zip"
           ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.DEPLOYEMENT_HOST }} << 'EOF'
-            bash -c "rm -rf /opt/espeen/espeen/*"
+            sudo /usr/bin/rm -rf /opt/espeen/espeen/*
             unzip "/tmp/espeen.zip" -d /opt/espeen/espeen/
             sudo systemctl restart espeen
           EOF
@@ -80,11 +80,12 @@ jobs:
       - name: Mirror repository to target repo
         run: |
           mv ./.mirrorignore ./.gitignore
-          rm -rf .git/modules/
-          rm -f .gitmodules
-          rm -f backend/.git
-          rm -f frontend/.git
-          rm -f mobile/.git
+          git rm --cached backend
+          rm ./backend/.git
+          git rm --cached frontend
+          rm ./frontend/.git
+          git rm --cached mobile
+          rm ./mobile/.git
           mkdir -p ~/.ssh/
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           git config --global user.name "${{ github.event.commits[0].author.username }}"
