@@ -86,6 +86,7 @@ jobs:
           rm ./frontend/.git
           git rm --cached mobile
           rm ./mobile/.git
+          rm .gitmodules
           mkdir -p ~/.ssh/
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           git config --global user.name "${{ github.event.commits[0].author.username }}"
