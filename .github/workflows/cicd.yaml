@@ -33,14 +33,14 @@ jobs:
           export ENV_PASSWORD="${{ secrets.ENV_PASSWORD }}"
           ./configure -m dev -n
 
-      - name: Install
-        run: |
-          sudo apt-get install -y openssh-client zip
-          sudo pip3 install -r ./scripts/requirements.txt
+      # - name: Install
+        # run: |
+          # sudo apt-get install -y openssh-client zip
+          # sudo pip3 install -r ./scripts/requirements.txt
 
-      - name: Start docker
-        run: |
-          docker compose up -d
+      # - name: Start docker
+        # run: |
+          # docker compose up -d
 
       # - name: Run tests
       #   id: run_tests
@@ -57,9 +57,9 @@ jobs:
       #     set -e
       #     exit $exit_code
 
-      - name: Stop docker compose
-        run: |
-          docker compose down
+      # - name: Stop docker compose
+      #   run: |
+      #     docker compose down
 
       - name: Deploy modification to production repository
         run: |
