@@ -3,7 +3,7 @@ import time
 import sys
 import os
 
-INITIAL_TIMEOUT = 0
+INITIAL_TIMEOUT = 60 if os.getenv("DEBUG") is None else 0
 
 def main() -> int:
     time.sleep(INITIAL_TIMEOUT)
