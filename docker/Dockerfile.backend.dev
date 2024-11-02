@@ -4,4 +4,4 @@ SHELL [ "/bin/bash" ]
 
 WORKDIR /app/
 
-CMD [ "bash", "-c", "npm i -g && npm run dev" ]
+CMD [ "bash", "-c", "npm i && npm run dev" ]
