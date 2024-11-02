@@ -19,8 +19,8 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v4
         with:
-          submodules: false
-          fetch-depth: 1
+          submodules: true
+          fetch-depth: 0
 
       - uses: gitleaks/gitleaks-action@v2
         env:
