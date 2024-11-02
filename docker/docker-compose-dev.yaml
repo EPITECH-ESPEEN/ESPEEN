@@ -100,40 +100,43 @@ services:
       - client_mobile
       - server
 
-  nginx:
-    env_file:
-      - ./.env
-    image: nginx:latest
-    container_name: nginx
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
-    networks:
-      area:
-        ipv4_address: ${NGINX_HOST}
-    depends_on:
-      - server
-      - client_web
-      - client_mobile
+  # Save this \/ for deployement.
+  # Don't want those to run in AT or in unit tests
 
-  ngrok:
-    env_file:
-      - ./.env
-    image: ngrok/ngrok:latest
-    container_name: ngrok
-    command:
-      - "http"
-      - "--url=${NGROK_URL}"
-      - "http://${NGINX_HOST}:80"
-    environment:
-      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
-    networks:
-      area:
-        ipv4_address: ${NGROK_HOST}
-    depends_on:
-      - server
-      - client_web
-      - client_mobile
-      - nginx
+  # nginx:
+  #   env_file:
+  #     - ./.env
+  #   image: nginx:latest
+  #   container_name: nginx
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/conf.d/default.conf
+  #   networks:
+  #     area:
+  #       ipv4_address: ${NGINX_HOST}
+  #   depends_on:
+  #     - server
+  #     - client_web
+  #     - client_mobile
+
+  # ngrok:
+  #   env_file:
+  #     - ./.env
+  #   image: ngrok/ngrok:latest
+  #   container_name: ngrok
+  #   command:
+  #     - "http"
+  #     - "--url=${NGROK_URL}"
+  #     - "http://${NGINX_HOST}:80"
+  #   environment:
+  #     NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+  #   networks:
+  #     area:
+  #       ipv4_address: ${NGROK_HOST}
+  #   depends_on:
+  #     - server
+  #     - client_web
+  #     - client_mobile
+  #     - nginx
 
   # Due to the removal of local DB, the admin panel is kinda unrelevant
   # admin_panel:
