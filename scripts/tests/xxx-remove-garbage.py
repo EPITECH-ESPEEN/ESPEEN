@@ -1,4 +1,4 @@
-from requests import Session
+from ._run_tests import run_test
 
 user = {
     "username": "allgooduser",
@@ -6,13 +6,16 @@ user = {
 }
 
 def run():
-    s = Session()
-
-    token = s.post("http://localhost:8080/api/login", json=user).json().get("access_token")
-    s.headers.update({"Authorization": "Bearer " + token})
-
-    output = s.delete("http://localhost:8080/api/user").json()
-    if output.get("message") != "User deleted successfully":
-        return (False, "User not deleted")
-
-    return (True, "=== All good ===")
+    return run_test({
+        "name": "Removing user",
+        "login": True,
+        "method": "DELETE",
+        "url": "/api/user",
+        "json": user,
+        "tests": [
+            {
+                "type": "contains",
+                "value": "User deleted successfully"
+            }
+        ]
+    })

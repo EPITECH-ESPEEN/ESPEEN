@@ -34,7 +34,7 @@ def run():
         return (False, "Weird route that should not exist does not return 404")
 
     # Backend available at http://localhost:8080/
-    backend_response_404 = s.post("http://localhost:8080/route_that_does_not_exists", data={"key1": "value1", "key2": "value2"}) # Running POST requet, with data "key1=value1&key2=value2"
+    backend_response_404 = s.post("http://localhost:8080/route_that_does_not_exists", json={"key1": "value1", "key2": "value2"}) # Running POST requet, with data "key1=value1&key2=value2"
     if backend_response_404.status_code != 404:
         return (False, "Weird route that should not exist does not return 404")
 

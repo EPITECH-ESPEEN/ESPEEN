@@ -1,54 +1,94 @@
-from requests import Session
+from ._run_tests import run_test
 
 tests = [
     {"name": "Username empty",
-     "test": {
+     "login": False,
+     "method": "POST",
+     "url": "/api/login",
+     "json": {
         "username": "",
         "password": "Th1s1s4L*ng4ndVal1dP4ssw0rd!",
      },
-     "expected_code": 404
+     "tests": [
+        {
+            "type": "code",
+            "value": 404
+        }
+     ]
     },
+
     {"name": "Username invalid",
-     "test": {
+     "login": False,
+     "method": "POST",
+     "url": "/api/login",
+     "json": {
         "username": "userdontexists",
         "password": "Th1s1s4L*ng4ndVal1dP4ssw0rd!",
      },
-     "expected_code": 404
+     "tests": [
+        {
+            "type": "code",
+            "value": 404
+        }
+     ]
     },
+
     {"name": "Password empty",
-     "test": {
+     "login": False,
+     "method": "POST",
+     "url": "/api/login",
+     "json": {
         "username": "allgooduser",
         "password": "",
      },
-     "expected_code": 401
+     "tests": [
+        {
+            "type": "code",
+            "value": 401
+        }
+     ]
     },
+
     {"name": "Password invalid",
-     "test": {
+     "login": False,
+     "method": "POST",
+     "url": "/api/login",
+     "json": {
         "username": "allgooduser",
         "password": "InvalidPassword",
      },
-     "expected_code": 401
+     "tests": [
+        {
+            "type": "code",
+            "value": 401
+        }
+     ]
     },
+
     {"name": "All good",
-     "test": {
+     "login": False,
+     "method": "POST",
+     "url": "/api/login",
+     "json": {
         "username": "allgooduser",
         "password": "Th1s1s4L*ng4ndVal1dP4ssw0rd!",
      },
-     "expected_code": 200
+     "tests": [
+        {
+            "type": "code",
+            "value": 200
+        }
+     ]
     },
 ]
 
 def run():
     output = ""
-    s = Session()
 
     for test in tests:
-        output += f"=== Test: {test.get('name')} ==="
-        request = s.post("http://localhost:8080/api/login", json=test.get("test"))
-        if request.status_code != test.get("expected_code"):
-            output += f"Expected error code {test.get('expected_code')} but got {request.status_code}\n"
-            output += f"Content: \n{request.text}\n"
+        status, _output = run_test(test)
+        output += _output
+        output += '\n'
+        if not status:
             return (False, output)
-        else:
-            output += f"Got expected {request.status_code} error code\n"
     return (True, output)
