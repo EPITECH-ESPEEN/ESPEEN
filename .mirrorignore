@@ -3,3 +3,4 @@
 .node_modules/
 data/
 .github/workflows/cicd.yaml
+__pycache__
