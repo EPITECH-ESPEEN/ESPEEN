@@ -6,13 +6,13 @@ user = {
 }
 
 def run():
-    output = ""
     s = Session()
 
     token = s.post("http://localhost:8080/api/login", json=user).json().get("access_token")
-    s.headers.update({"Autorization": "Bearer " + token})
+    s.headers.update({"Authorization": "Bearer " + token})
 
-    # cookies should be all good
-    output += s.delete("http://localhost:8080/user").text + '\n'
+    output = s.delete("http://localhost:8080/api/user").json()
+    if output.get("message") != "User deleted successfully":
+        return (False, "User not deleted")
 
     return (True, "=== All good ===")
