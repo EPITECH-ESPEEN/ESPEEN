@@ -71,10 +71,10 @@ jobs:
           zip -r "$ZIP_FILE" ./backend/ ./frontend/ ./mobile/ ./docker/ ./.env ./nginx.conf >/dev/null
           scp -i "$SSH_KEY" -o StrictHostKeyChecking=no "$ZIP_FILE" ${{ secrets.SSH_USER }}@${{ secrets.DEPLOYEMENT_HOST }}:"/tmp/espeen.zip"
           ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.DEPLOYEMENT_HOST }} << 'EOF'
-            sudo systemctl stop espeen
+            sudo /usr/bin/systemctl stop espeen
             sudo /usr/bin/rm -rf /opt/espeen/espeen/*
             unzip -o "/tmp/espeen.zip" -d /opt/espeen/espeen/ >/dev/null
-            sudo systemctl restart espeen
+            sudo /usr/bin/systemctl restart espeen
           EOF
 
       # Manually mirror, to have env and stuff
