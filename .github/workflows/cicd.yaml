@@ -19,8 +19,8 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v4
         with:
-          submodules: true
-          fetch-depth: 0
+          submodules: false
+          fetch-depth: 1
 
       - uses: gitleaks/gitleaks-action@v2
         env:
@@ -76,10 +76,11 @@ jobs:
             sudo systemctl restart espeen
           EOF
 
-        # Manually mirror, to have env and stuff
+      # Manually mirror, to have env and stuff
       - name: Mirror repository to target repo
         run: |
           mv ./.mirrorignore ./.gitignore
+          git submodule update --init --recursive
           git rm --cached backend
           rm ./backend/.git
           git rm --cached frontend
