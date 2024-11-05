@@ -70,6 +70,7 @@ services:
         ipv4_address: ${MOBILE_HOST}
     volumes:
       - "./mobile/:/app/"
+      - "./data/shared_volume/:/tmp/shared_volume/"
     depends_on:
       - server
 
@@ -94,6 +95,7 @@ services:
         ipv4_address: ${FRONTEND_HOST}
     volumes:
       - "./frontend/:/app/"
+      - "./data/shared_volume/:/tmp/shared_volume/"
       # - "./data/mobile/:/opt/mobile_build/"
       # Don't you dare
     depends_on:
