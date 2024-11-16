@@ -72,11 +72,7 @@ jobs:
           zip -r "$ZIP_FILE" ./docker-compose.yaml ./backend/ ./frontend/ ./mobile/ ./docker/ ./.env ./nginx.conf >/dev/null
           scp -i "$SSH_KEY" -o StrictHostKeyChecking=no "$ZIP_FILE" ${{ secrets.SSH_USER }}@${{ secrets.DEPLOYEMENT_HOST }}:"/tmp/espeen.zip"
           ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.DEPLOYEMENT_HOST }} << 'EOF'
-            sudo /usr/bin/systemctl stop espeen
-            sudo /usr/bin/rm -rf /opt/espeen/*
-            sudo /usr/bin/rm -rf /opt/espeen/.[!.]*
-            unzip -o "/tmp/espeen.zip" -d /opt/espeen/ >/dev/null
-            sudo /usr/bin/systemctl restart espeen
+            sudo /opt/reinstall-espeen.sh /tmp/espeen.zip
           EOF
 
       # Manually mirror, to have env and stuff
