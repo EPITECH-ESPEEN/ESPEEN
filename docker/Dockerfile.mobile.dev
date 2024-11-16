@@ -1,33 +1,68 @@
-# Utiliser une image Node.js pour Expo et Android SDK pour la construction
-FROM node:16
+# Base image with Node.js
+FROM node:18.9.0
 
-# Installer les dépendances nécessaires pour Expo et Android
-RUN apt-get update && apt-get install -y openjdk-11-jdk curl zip && \
-    apt-get clean
+# Install required dependencies
+RUN apt-get update && apt-get install -y \
+    openjdk-17-jdk \
+    curl \
+    zip \
+    unzip \
+    git \
+    && apt-get clean
 
-# Installer Expo CLI et EAS CLI globalement
+# Set environment variables for Android SDK
+ENV ANDROID_HOME /usr/local/android-sdk
+ENV PATH $ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
+
+# Install Android SDK command-line tools
+RUN mkdir -p $ANDROID_HOME/cmdline-tools && cd $ANDROID_HOME/cmdline-tools \
+    && wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O cmdline-tools.zip \
+    && unzip cmdline-tools.zip -d . \
+    && mv cmdline-tools $ANDROID_HOME/cmdline-tools/latest \
+    && rm cmdline-tools.zip
+
+# Accept Android licenses
+RUN yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+
+# Install required SDK packages
+RUN $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
+    "platform-tools" \
+    "platforms;android-31" \
+    "build-tools;31.0.0"
+
+# Install Expo CLI and EAS CLI globally
 RUN npm install -g expo-cli eas-cli
 
-# Définir le répertoire de travail
-WORKDIR /app/
+# Set the working directory
+WORKDIR /app
 
-# Copier le contenu de mobile/ dans /app/
+# Copy the mobile project into the container
 COPY mobile/ /app/
 
-# Rendre le script d'installation exécutable
+# Remove any existing git history and submodules
+RUN rm -rf /app/.git /app/mobile/.git /app/mobile/.gitmodules
+
+# Make the install script executable
 RUN chmod +x /app/bin/install
 
-# Exécuter le script pour installer les dépendances nécessaires
+# Run the install script to install project dependencies
 RUN /app/bin/install
 
-# Construire l'APK avec EAS
-RUN eas build -p android --profile build_app --local
+# Configure Git user details to avoid commit error
+RUN git config --global user.name "Docker User" && \
+    git config --global user.email "docker@example.com"
 
-# Déplacer l'APK généré vers le volume partagé
-RUN mv /app/build/*.apk /shared_volume/client.apk
+# Initialize Git and make an initial commit
+RUN git init && git add . && git commit -m "Initial commit"
 
-# Exposer le port de développement
+# Build the APK using EAS CLI
+RUN EXPO_TOKEN=EGehonroI93F7zL7r8L6cgsOE5tRn7ugJ9viW7yP eas build -p android --profile build_app --local --output /shared_volume/client.apk
+
+# Create a shared directory for the generated APK and move it there
+# RUN mkdir -p /shared_volume && mv /*.apk /shared_volume/client.apk
+
+# Expose the development server port
 EXPOSE 8082
 
-# Commande par défaut
+# Default command to start the Expo development server
 CMD ["expo", "start"]
