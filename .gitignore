@@ -3,6 +3,5 @@
 .node_modules/
 .env
 data/
-/docker-compose.yaml
 /init-mongo.js
 __pycache__

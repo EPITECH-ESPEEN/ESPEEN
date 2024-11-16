@@ -1,0 +1,33 @@
+# Utiliser une image Node.js pour Expo et Android SDK pour la construction
+FROM node:16
+
+# Installer les dépendances nécessaires pour Expo et Android
+RUN apt-get update && apt-get install -y openjdk-11-jdk curl zip && \
+    apt-get clean
+
+# Installer Expo CLI et EAS CLI globalement
+RUN npm install -g expo-cli eas-cli
+
+# Définir le répertoire de travail
+WORKDIR /app/
+
+# Copier le contenu de mobile/ dans /app/
+COPY mobile/ /app/
+
+# Rendre le script d'installation exécutable
+RUN chmod +x /app/bin/install
+
+# Exécuter le script pour installer les dépendances nécessaires
+RUN /app/bin/install
+
+# Construire l'APK avec EAS
+RUN eas build -p android --profile build_app --local
+
+# Déplacer l'APK généré vers le volume partagé
+RUN mv /app/build/*.apk /shared_volume/client.apk
+
+# Exposer le port de développement
+EXPOSE 8082
+
+# Commande par défaut
+CMD ["expo", "start"]
