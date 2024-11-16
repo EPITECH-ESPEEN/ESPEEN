@@ -67,13 +67,15 @@ jobs:
           echo "${{ secrets.DEPLOYEMENT_PRIVATE_KEY }}" > "$SSH_KEY"
 
           ZIP_FILE=$(mktemp /tmp/tmp.XXXXXXXX.zip)
-          rm "$ZIP_FILE"
-          zip -r "$ZIP_FILE" ./backend/ ./frontend/ ./mobile/ ./docker/ ./.env ./nginx.conf >/dev/null
+          rm -f "$ZIP_FILE"
+          mv docker/deployement-docker-compose.yaml ./docker-compose.yaml
+          zip -r "$ZIP_FILE" ./docker-compose.yaml ./backend/ ./frontend/ ./mobile/ ./docker/ ./.env ./nginx.conf >/dev/null
           scp -i "$SSH_KEY" -o StrictHostKeyChecking=no "$ZIP_FILE" ${{ secrets.SSH_USER }}@${{ secrets.DEPLOYEMENT_HOST }}:"/tmp/espeen.zip"
           ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.DEPLOYEMENT_HOST }} << 'EOF'
             sudo /usr/bin/systemctl stop espeen
-            sudo /usr/bin/rm -rf /opt/espeen/espeen/*
-            unzip -o "/tmp/espeen.zip" -d /opt/espeen/espeen/ >/dev/null
+            sudo /usr/bin/rm -rf /opt/espeen/*
+            sudo /usr/bin/rm -rf /opt/espeen/.[!.]*
+            unzip -o "/tmp/espeen.zip" -d /opt/espeen/ >/dev/null
             sudo /usr/bin/systemctl restart espeen
           EOF
 
