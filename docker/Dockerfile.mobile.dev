@@ -55,6 +55,8 @@ RUN git config --global user.name "Docker User" && \
 # Initialize Git and make an initial commit
 RUN git init && git add . && git commit -m "Initial commit"
 
+RUN mkdir -p /build/
+
 # Build the APK using EAS CLI
 RUN EXPO_TOKEN=EGehonroI93F7zL7r8L6cgsOE5tRn7ugJ9viW7yP eas build -p android --profile build_app --local --output /build/client.apk
 
