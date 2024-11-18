@@ -61,19 +61,19 @@ jobs:
         run: |
           docker compose down
 
-      - name: Deploy modification to production repository
-        run: |
-          SSH_KEY=$(mktemp)
-          echo "${{ secrets.DEPLOYEMENT_PRIVATE_KEY }}" > "$SSH_KEY"
+      # - name: Deploy modification to production repository
+      #   run: |
+      #     SSH_KEY=$(mktemp)
+      #     echo "${{ secrets.DEPLOYEMENT_PRIVATE_KEY }}" > "$SSH_KEY"
 
-          ZIP_FILE=$(mktemp /tmp/tmp.XXXXXXXX.zip)
-          rm -f "$ZIP_FILE"
-          mv docker/deployement-docker-compose.yaml ./docker-compose.yaml
-          zip -r "$ZIP_FILE" ./docker-compose.yaml ./backend/ ./frontend/ ./mobile/ ./docker/ ./.env ./nginx.conf >/dev/null
-          scp -i "$SSH_KEY" -o StrictHostKeyChecking=no "$ZIP_FILE" ${{ secrets.SSH_USER }}@${{ secrets.DEPLOYEMENT_HOST }}:"/tmp/espeen.zip"
-          ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.DEPLOYEMENT_HOST }} << 'EOF'
-            sudo /opt/reinstall-espeen.sh /tmp/espeen.zip
-          EOF
+      #     ZIP_FILE=$(mktemp /tmp/tmp.XXXXXXXX.zip)
+      #     rm -f "$ZIP_FILE"
+      #     mv docker/deployement-docker-compose.yaml ./docker-compose.yaml
+      #     zip -r "$ZIP_FILE" ./docker-compose.yaml ./backend/ ./frontend/ ./mobile/ ./docker/ ./.env ./nginx.conf >/dev/null
+      #     scp -i "$SSH_KEY" -o StrictHostKeyChecking=no "$ZIP_FILE" ${{ secrets.SSH_USER }}@${{ secrets.DEPLOYEMENT_HOST }}:"/tmp/espeen.zip"
+      #     ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.DEPLOYEMENT_HOST }} << 'EOF'
+      #       sudo /opt/reinstall-espeen.sh /tmp/espeen.zip
+      #     EOF
 
       # Manually mirror, to have env and stuff
       - name: Mirror repository to target repo
