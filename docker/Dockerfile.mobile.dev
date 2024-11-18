@@ -55,18 +55,8 @@ RUN git config --global user.name "Docker User" && \
 # Initialize Git and make an initial commit
 RUN git init && git add . && git commit -m "Initial commit"
 
-RUN mkdir -p /build/
+RUN mkdir -p /apk && \
+    EXPO_TOKEN=EGehonroI93F7zL7r8L6cgsOE5tRn7ugJ9viW7yP eas build -p android --profile build_app --local --output /app/apk/client.apk
 
-# Build the APK using EAS CLI
-RUN EXPO_TOKEN=EGehonroI93F7zL7r8L6cgsOE5tRn7ugJ9viW7yP eas build -p android --profile build_app --local --output /build/client.apk
-
-# Building in directory /build/ in order to just copy the file to the shared volume on restart, and not rebuild it each time.
-
-# Create a shared directory for the generated APK and move it there
-# RUN mkdir -p /shared_volume && mv /*.apk /shared_volume/client.apk
-
-# Expose the development server port
-EXPOSE 8082
-
-# Default command to start the Expo development server
-CMD [ "bash", "-c", "cp /build/client.apk /data/shared_volume/client.apk && expo start" ]
+# Declare the shared volume
+VOLUME /app/apk

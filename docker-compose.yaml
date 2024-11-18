@@ -57,17 +57,17 @@ services:
       - PORT=${MOBILE_PORT}
       - NODE_ENV=DEV
       - BACKEND_URL="http://${DOMAIN_NAME}:${BACKEND_PORT}/"
-      - SHARED_VOLUME_PATH="/data/shared_volume/"
+      # - SHARED_VOLUME_PATH="/data/shared_volume/"
     container_name: area-mobile
-    restart: always
-    ports:
-      - "8082:${MOBILE_PORT}"
+    #restart: always
+    # ports:
+    #   - "8082:${MOBILE_PORT}"
     networks:
       area:
         ipv4_address: ${MOBILE_HOST}
     volumes:
       - ./mobile:/app
-      - shared_volume:/shared_volume
+      - common:/app/apk
     depends_on:
       - server
 
@@ -81,7 +81,7 @@ services:
       - PORT=${FRONTEND_PORT}
       - NODE_ENV=DEV
       - BACKEND_URL="http://${DOMAIN_NAME}:${BACKEND_PORT}/"
-      - SHARED_VOLUME_PATH="/data/shared_volume/"
+      # - SHARED_VOLUME_PATH="/data/shared_volume/"
     container_name: area-web
     restart: always
     ports:
@@ -91,7 +91,7 @@ services:
         ipv4_address: ${FRONTEND_HOST}
     volumes:
       - ./frontend:/app
-      - shared_volume:/app/shared_volume
+      - common:/app/apk
       # - "./data/mobile/:/opt/mobile_build/"
       # Don't you dare
     depends_on:
@@ -121,43 +121,43 @@ services:
   #     - client_web
   #     - server
 
-  nginx:
-    env_file:
-      - ./.env
-    image: nginx:latest
-    container_name: nginx
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
-    networks:
-      area:
-        ipv4_address: ${NGINX_HOST}
-    depends_on:
-      - server
-      - client_web
-      - client_mobile
+  # nginx:
+  #   env_file:
+  #     - ./.env
+  #   image: nginx:latest
+  #   container_name: nginx
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/conf.d/default.conf
+  #   networks:
+  #     area:
+  #       ipv4_address: ${NGINX_HOST}
+  #   depends_on:
+  #     - server
+  #     - client_web
+  #     - client_mobile
 
-  ngrok:
-    env_file:
-      - ./.env
-    image: ngrok/ngrok:latest
-    container_name: ngrok
-    command:
-      - "http"
-      - "--url=${NGROK_URL}"
-      - "http://${NGINX_HOST}:80"
-    environment:
-      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
-    networks:
-      area:
-        ipv4_address: ${NGROK_HOST}
-    depends_on:
-      - server
-      - client_web
-      - client_mobile
-      - nginx
+  # ngrok:
+  #   env_file:
+  #     - ./.env
+  #   image: ngrok/ngrok:latest
+  #   container_name: ngrok
+  #   command:
+  #     - "http"
+  #     - "--url=${NGROK_URL}"
+  #     - "http://${NGINX_HOST}:80"
+  #   environment:
+  #     NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+  #   networks:
+  #     area:
+  #       ipv4_address: ${NGROK_HOST}
+  #   depends_on:
+  #     - server
+  #     - client_web
+  #     - client_mobile
+  #     - nginx
 
 volumes:
-  shared_volume:
+  common:
 
 networks:
   area:
